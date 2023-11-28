@@ -7,6 +7,7 @@ import gameobject
 import scene
 import image
 import time_game
+import scenes
 
 class Game:
     def __init__(self):
@@ -16,13 +17,8 @@ class Game:
         self.scene_manager = scene_manager.SceneManager()
         self.time = time_game.Time()
 
-
-        self.s = gameobject.GameObject(image.Image([50,50]))
-        self.s.scale([64,64])
-        self.s.move([64,64])
-        self.scene = scene.Scene()
-        self.scene.add_object(self.s)
-        self.scene_manager.add_scene(self.scene)
+        self.game_scene = scenes.GameScene()
+        self.scene_manager.add_scene(self.game_scene)
 
     def check_game_events(self):
         if(self.event_handler.check_events("Quit")):

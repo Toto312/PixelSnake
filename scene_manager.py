@@ -8,6 +8,7 @@ class SceneManager:
 
     def add_scene(self, scene):
         self.scenes.append(scene)
+        self.scenes[self.curr_scene_index].is_active = False
         self.curr_scene_index = len(self.scenes)-1
 
     def update(self):
