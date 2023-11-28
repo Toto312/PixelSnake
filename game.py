@@ -12,7 +12,7 @@ import scenes
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode([800,800])
+        self.screen = pygame.display.set_mode([800,800], pygame.RESIZABLE)
         self.event_handler = event_handler.EventHandler()
         self.scene_manager = scene_manager.SceneManager()
         self.time = time_game.Time()
@@ -32,7 +32,12 @@ class Game:
                 exit()
 
         if(video := self.event_handler.check_events("Video Resize")):
-            print(max(video.size))
+            width, height = video.size
+            if width < 600:
+                width = 600
+            if height < 600:
+                height = 600
+            self.screen = pygame.display.set_mode((width,height), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
 
     def mainloop(self):
         while True:
