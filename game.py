@@ -1,11 +1,7 @@
 import pygame
 
 import event_handler
-import sprite
 import scene_manager
-import gameobject
-import scene
-import image
 import time_game
 import scenes
 

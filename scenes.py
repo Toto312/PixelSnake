@@ -30,9 +30,8 @@ class GameScene(scene.Scene):
                 self.snake.change_direction([-1,0])
             elif(button.key == pygame.K_d):
                 self.snake.change_direction([1,0])
-
-    def is_colliding(self, rect):
-        return self.limit.colliderect(rect)
+            elif(button.key == pygame.K_p):
+                self.snake.increment_body()
 
     def update(self):
         self.check_events()
