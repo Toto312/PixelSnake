@@ -1,14 +1,17 @@
 
 
 class Grid:
-    def __init__(self, size):
+    def __init__(self, dimensions, size):
+        self.dimensions = dimensions
         self.size = size
 
+        self.max = self.ret_grid(self.size)
+
     def ret_coord_grid(self, coord):
-        return [(coord[0]//self.size[0]) * self.size[0], (coord[1]//self.size[1]) * self.size[1]]
+        return [(coord[0]//self.dimensions[0]) * self.dimensions[0], (coord[1]//self.dimensions[1]) * self.dimensions[1]]
 
     def ret_grid(self,coord):
-        return [(coord[0]//self.size[0]), (coord[1]//self.size[1])]
+        return [(coord[0]//self.dimensions[0]), (coord[1]//self.dimensions[1])]
 
     def ret_coord_world(self,coord):
-        return [coord[0] * self.size[0],coord[1] * self.size[1]]
+        return [coord[0] * self.dimensions[0],coord[1] * self.dimensions[1]]

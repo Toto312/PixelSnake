@@ -9,3 +9,6 @@ class GameObject(sprite.Sprite):
 
     def update(self):
         pass
+
+    def on_collision(self, obj):
+        pass
