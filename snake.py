@@ -3,7 +3,6 @@ import pygame
 import gameobject
 import image
 import time_game
-
 class Snake:
     def __init__(self, scene):
         self.scene = scene
@@ -21,8 +20,9 @@ class Snake:
         self.snake_body.add(head)
         self.head = self.snake_body.sprites()[0]
     
-        self.direction = (-1,0)
-        self.last_direction = [0,0]
+        # first value is time in milliseconds, the second value is the coord
+        self.direction = [80, [-1,0]]
+        self.last_direction = [0, [-1,0]]
 
         self.sprite_to_add = None
         self.collided_itself = False
@@ -34,13 +34,13 @@ class Snake:
 
         self.sprite_to_add = sprites
 
-    def change_direction(self,direction):
+    def change_direction(self, direction):
         self.last_direction = self.direction
-        self.direction = direction
+        self.direction = [pygame.time.get_ticks(), direction]
 
     def is_colliding(self, rect):
         if(self.real_pos[0]+self.head.rect[2]+1>=rect.width or self.real_pos[0]-1<=rect.x or
-           self.real_pos[0]+self.head.rect[3]+1>=rect.height or self.real_pos[1]-1<=rect.y):
+           self.real_pos[1]+self.head.rect[3]+1>=rect.height or self.real_pos[1]-1<=rect.y):
             return True
         return False
 
@@ -55,8 +55,10 @@ class Snake:
         if(self.sprite_to_add and not pygame.sprite.spritecollideany(self.sprite_to_add,self.snake_body)):
             self.snake_body.add(self.sprite_to_add)
             self.sprite_to_add = None
-            
-        if(self.direction[0] == -self.last_direction[0] and self.direction[1] == -self.last_direction[1]):
+
+        #adding an offset when changing direction
+        if((self.direction[1][0] == -self.last_direction[1][0] and self.direction[1][1] == -self.last_direction[1][1]) or
+           self.direction[0]-self.last_direction[0]<150):
             self.direction = self.last_direction
 
         if(not self.is_colliding(self.scene.limit) and not self.collided_itself):
@@ -65,7 +67,7 @@ class Snake:
 
     def move(self):
         last_pos = self.head.rect[0:2]
-        self.real_pos = [self.real_pos[0]+round(self.speed*self.direction[0]*time_game.Time().dt),self.real_pos[1]+round(self.speed*self.direction[1]*time_game.Time().dt)]
+        self.real_pos = [self.real_pos[0]+round(self.speed*self.direction[1][0]*time_game.Time().dt),self.real_pos[1]+round(self.speed*self.direction[1][1]*time_game.Time().dt)]
 
         self.head.change_position(self.scene.grid.ret_coord_grid(self.real_pos))
         

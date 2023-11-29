@@ -22,6 +22,8 @@ class GameScene(scene.Scene):
         self.add_object(self.apple)
         self.score = 0
 
+        self.apple.relocate_position(self.snake.snake_body.sprites())
+
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
             if(button.key == pygame.K_w):

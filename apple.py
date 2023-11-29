@@ -22,18 +22,16 @@ class Apple(gameobject.GameObject):
             self.scene.add_score()
 
     def relocate_position(self, sprites):
-        not_posibilities = [self.rect[0:2]] + sprites
+        pos = [i.rect[0:2] for i in sprites]
+        not_posibilities = [self.rect[0:2]] + pos
 
         choosed = [0,0]
 
         for i in range(20):
             rand = [random.randint(0,self.scene.grid.max[0]),random.randint(0,self.scene.grid.max[0])]
-            print(rand)
-            is_it_equal = False
-            for j in not_posibilities:
-                if(j == self.scene.grid.ret_coord_world(rand)):
-                    is_it_equal = True
-            if(is_it_equal==False):
+            if(self.scene.grid.ret_coord_world(rand) not in not_posibilities):
                 choosed = self.scene.grid.ret_coord_world(rand)
+                break
+
         self.change_position(choosed)
 
