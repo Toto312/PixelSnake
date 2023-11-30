@@ -20,11 +20,24 @@ class GameScene(scene.Scene):
         self.snake = snake.Snake(self)
         self.apple = apple.Apple(self)
         self.add_object(self.apple)
-        self.score = 0
 
         self.apple.relocate_position(self.snake.snake_body.sprites())
+        
+        self.score = 0
+        self.is_paused = False
+
+        #im = image.Image([5,5])
+        #im().fill((255,255,255))
+        #self.rel_pos = gameobject.GameObject(im)
+        #self.rel_pos.change_position(self.snake.real_pos)
 
     def check_events(self):
+        if(button := self.event_handler.check_events("Key down")):
+            if(button.key == pygame.K_p):
+                self.is_paused = not self.is_paused
+
+
+    def check_events_movement(self):
         if(button := self.event_handler.check_events("Key down")):
             if(button.key == pygame.K_w):
                 self.snake.change_direction([0,-1])
@@ -34,23 +47,25 @@ class GameScene(scene.Scene):
                 self.snake.change_direction([-1,0])
             elif(button.key == pygame.K_d):
                 self.snake.change_direction([1,0])
-            elif(button.key == pygame.K_p):
-                self.snake.increment_body()
 
     def check_collision(self):
-        if(self.apple.rect.collidepoint(self.snake.real_pos)):
+        if(self.apple.rect.colliderect(self.snake.head)):
             self.snake.increment_body()
             self.apple.relocate_position(self.snake.snake_body.sprites())
-            #self.apple.on_collision(self.snake)
+            self.score += 1
 
     def add_score(self):
         self.score += 1
 
     def update(self):
+        #self.rel_pos.change_position(self.snake.real_pos)
         self.check_events()
-        self.snake.update()
-        self.check_collision()
+        if(not self.is_paused):
+            self.check_events_movement()
+            self.snake.update()
+            self.check_collision()
 
     def draw(self, window):
         self.objects.draw(window)
         self.snake.snake_body.draw(window)
+        #window.blit(self.rel_pos.image,self.rel_pos.rect[0:2])

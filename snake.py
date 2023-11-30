@@ -3,6 +3,7 @@ import pygame
 import gameobject
 import image
 import time_game
+
 class Snake:
     def __init__(self, scene):
         self.scene = scene
@@ -10,7 +11,7 @@ class Snake:
 
         self.color = (240,70,61)
         self.real_pos = [500,500]
-        self.speed = 0.3
+        self.speed = 0.28
 
         self.surface = image.Image([45,45])
         self.surface().fill(self.color)
@@ -39,8 +40,8 @@ class Snake:
         self.direction = [pygame.time.get_ticks(), direction]
 
     def is_colliding(self, rect):
-        if(self.real_pos[0]+self.head.rect[2]+1>=rect.width or self.real_pos[0]-1<=rect.x or
-           self.real_pos[1]+self.head.rect[3]+1>=rect.height or self.real_pos[1]-1<=rect.y):
+        if(self.real_pos[0]+round(self.head.rect[2]/2)>rect.width or self.real_pos[0]<=rect.x or
+           self.real_pos[1]+round(self.head.rect[3]/2)>rect.height or self.real_pos[1]<=rect.y):
             return True
         return False
 
@@ -58,7 +59,7 @@ class Snake:
 
         #adding an offset when changing direction
         if((self.direction[1][0] == -self.last_direction[1][0] and self.direction[1][1] == -self.last_direction[1][1]) or
-           self.direction[0]-self.last_direction[0]<150):
+           self.direction[0]-self.last_direction[0]<130):
             self.direction = self.last_direction
 
         if(not self.is_colliding(self.scene.limit) and not self.collided_itself):
