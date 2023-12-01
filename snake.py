@@ -7,11 +7,15 @@ import time_game
 class Snake:
     def __init__(self, scene):
         self.scene = scene
-        self.snake_body = pygame.sprite.Group()
 
         self.color = (240,70,61)
-        self.real_pos = [500,500]
         self.speed = 0.28
+
+        self.init_body()
+
+    def init_body(self):
+        self.real_pos = [500,500]
+        self.snake_body = pygame.sprite.Group()
 
         self.surface = image.Image([45,45])
         self.surface().fill(self.color)
@@ -59,11 +63,13 @@ class Snake:
 
         #adding an offset when changing direction
         if((self.direction[1][0] == -self.last_direction[1][0] and self.direction[1][1] == -self.last_direction[1][1]) or
-           self.direction[0]-self.last_direction[0]<130):
+           self.direction[0]-self.last_direction[0]<120):
             self.direction = self.last_direction
 
         if(not self.is_colliding(self.scene.limit) and not self.collided_itself):
             self.move()
+        else:
+            self.scene.it_died()
 
 
     def move(self):
