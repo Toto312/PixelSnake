@@ -17,6 +17,7 @@ class Game:
 
         icon = pygame.image.load("Resources/logo.ico")
         pygame.display.set_icon(icon)
+        pygame.display.set_caption("Totris")
         self.screen = pygame.display.set_mode([800,800], pygame.RESIZABLE)
 
         self.event_handler = event_handler.EventHandler()
@@ -31,13 +32,13 @@ class Game:
     def check_game_events(self):
         if(self.event_handler.check_events("Quit")):
             pygame.quit()
-            exit()
+            sys.exit()
 
         if(key := self.event_handler.check_events("Key down")):
             # F4
             if(key.scancode == 61):
                 pygame.quit()
-                exit()
+                sys.exit()
 
         if(video := self.event_handler.check_events("Video Resize")):
             width, height = video.size

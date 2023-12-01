@@ -1,4 +1,5 @@
 import pygame
+import sys
 
 import scene
 import snake
@@ -94,7 +95,7 @@ class GameScene(scene.Scene):
 
     def exit(self):
         pygame.quit()
-        exit()
+        sys.exit()
 
     def draw(self, window):
         self.objects.draw(window)
