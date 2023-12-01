@@ -28,7 +28,7 @@ class GameScene(scene.Scene):
         self.is_paused = False
         self.does_died = False
 
-        self.menu = menu.Menu()
+        self.menu = menu.Menu(self)
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
 
@@ -61,11 +61,13 @@ class GameScene(scene.Scene):
             # enter
             elif(button.key == 13):
                 if(self.does_died):
-                    self.does_died = False
-                    self.press_enter.is_active = False
-                    self.snake.init_body()
-                    self.apple.relocate_position(self.snake.snake_body.sprites())
-                    
+                    self.restart()
+
+    def restart(self):
+        self.does_died = False
+        self.press_enter.is_active = False
+        self.snake.init_body()
+        self.apple.relocate_position(self.snake.snake_body.sprites())
 
     def check_collision(self):
         if(self.apple.rect.colliderect(self.snake.head)):
@@ -94,6 +96,10 @@ class GameScene(scene.Scene):
             self.press_enter.update(time_game.Time().dt)
         else: 
             self.menu.update()
+
+    def exit(self):
+        pygame.quit()
+        exit()
 
     def draw(self, window):
         self.objects.draw(window)

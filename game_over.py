@@ -52,7 +52,6 @@ class PressEnter:
             self.current_time=pygame.time.get_ticks()
             pos = (self.current_time//self.periodic_time)/self.periodic_time
             curr_time = (1/2*math.cos(2*pos*math.pi)+1/2)
-            print(curr_time)
             self.sprite.image.set_alpha(round(255*curr_time))
 
     def draw(self,screen):

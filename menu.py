@@ -5,7 +5,9 @@ import image
 import event_handler
 
 class Menu:
-    def __init__(self):
+    def __init__(self, scene):
+        self.scene = scene
+
         img_def = image.Image("men.png")
         img_def().convert_alpha()
         self.sprite_default = gameobject.GameObject(img_def)
@@ -36,6 +38,14 @@ class Menu:
 
         self.mode = 0
     def update(self):
+        if(key := event_handler.EventHandler().check_events("Mouse button down")):
+            if(self.mode == 1):
+                self.scene.is_paused = False
+            elif(self.mode == 2):
+                self.scene.restart()
+                self.scene.is_paused = False
+            elif(self.mode == 3):
+                self.scene.exit()
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
             if(self.rect_play.collidepoint(key.pos)):
                 self.mode = 1
