@@ -6,7 +6,7 @@ import event_handler
 import scene_manager
 import time_game
 import scenes
-import font
+import debug
 
 if getattr(sys, 'frozen', False):
     os.chdir(sys._MEIPASS)
@@ -26,8 +26,8 @@ class Game:
         self.game_scene = scenes.GameScene()
         self.scene_manager.add_scene(self.game_scene)
 
-        self.fps_font = font.Font("Resources/PixeloidSans.ttf",f"FPS: {round(self.time.get_fps())}",[self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1],30)
-        self.fps_font.change_position([self.screen.get_size()[0]-self.fps_font.surface.get_rect()[2],0])
+        self.debug = debug.DebugInfo(self.screen)
+
     def check_game_events(self):
         if(self.event_handler.check_events("Quit")):
             pygame.quit()
@@ -52,8 +52,7 @@ class Game:
             self.time.update()
 
             # update events
-            self.fps_font.change_text(f"FPS: {round(self.time.get_fps())}")
-            self.fps_font.change_position([self.screen.get_size()[0]-self.fps_font.surface.get_rect()[2],0])
+            self.debug.update()
             self.event_handler.update()
             self.check_game_events()
             self.scene_manager.update()
@@ -61,7 +60,7 @@ class Game:
             # draw
             self.screen.fill((0,0,0))
             self.scene_manager.draw()
-            self.fps_font.draw(self.screen)
+            self.debug.draw()
             pygame.display.flip()
 
 if(__name__=="__main__"):
