@@ -8,25 +8,25 @@ class Menu:
     def __init__(self, scene):
         self.scene = scene
 
-        img_def = image.Image("men.png")
+        img_def = image.Image("Resources/men.png")
         img_def().convert_alpha()
         self.sprite_default = gameobject.GameObject(img_def)
         self.sprite_default.scale([600,600])
         self.sprite_default.change_position([100,100])
 
-        img_play = image.Image("men1.png")
+        img_play = image.Image("Resources/men1.png")
         img_play().convert_alpha()
         self.sprite_play = gameobject.GameObject(img_play)
         self.sprite_play.scale([600,600])
         self.sprite_play.change_position([100,100])
 
-        img_restart = image.Image("men2.png")
+        img_restart = image.Image("Resources/men2.png")
         img_restart().convert_alpha()
         self.sprite_restart = gameobject.GameObject(img_restart)
         self.sprite_restart.scale([600,600])
         self.sprite_restart.change_position([100,100])
 
-        img_exit = image.Image("men3.png")
+        img_exit = image.Image("Resources/men3.png")
         img_exit().convert_alpha()
         self.sprite_exit = gameobject.GameObject(img_exit)
         self.sprite_exit.scale([600,600])

@@ -4,8 +4,6 @@ import event_handler
 import scene_manager
 import time_game
 import scenes
-import image
-import gameobject
 
 class Game:
     def __init__(self):

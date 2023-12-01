@@ -10,7 +10,7 @@ class GameOver:
         self.current_time = pygame.time.get_ticks()
         self.open_time = 5000**2
         
-        img = image.Image("game_over.png")
+        img = image.Image("Resources/game_over.png")
         img().convert_alpha()
         self.sprite = gameobject.GameObject(img)
         self.sprite.scale([500,500])
@@ -35,7 +35,7 @@ class PressEnter:
         self.current_time = pygame.time.get_ticks()
         self.periodic_time = 50
         
-        img = image.Image("press_enter.png")
+        img = image.Image("Resources/press_enter.png")
         img().convert_alpha()
         self.sprite = gameobject.GameObject(img)
         self.sprite.scale([500,500])
