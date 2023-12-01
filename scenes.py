@@ -20,14 +20,12 @@ class GameScene(scene.Scene):
 
         self.snake = snake.Snake(self)
         self.apple = apple.Apple(self)
+        self.add_object(self.apple)
+        self.apple.relocate_position(self.snake.snake_body.sprites())
 
         self.menu = menu.Menu(self)
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
-
-        self.add_object(self.apple)
-
-        self.apple.relocate_position(self.snake.snake_body.sprites())
         
         self.score = 0
         self.is_paused = True

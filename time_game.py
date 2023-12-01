@@ -6,7 +6,7 @@ class Time(metaclass = utils.SingletonMeta):
     def __init__(self):
         self.clock = pygame.time.Clock()
     
-        self.fps = 60
+        self.fps = 120
         self.dt = 0
 
     def update(self):
