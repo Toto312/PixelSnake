@@ -1,9 +1,14 @@
+import os
+import sys
 import pygame
 
 import event_handler
 import scene_manager
 import time_game
 import scenes
+
+if getattr(sys, 'frozen', False):
+    os.chdir(sys._MEIPASS)
 
 class Game:
     def __init__(self):
