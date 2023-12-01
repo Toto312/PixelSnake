@@ -37,6 +37,7 @@ class Menu:
         self.rect_exit = pygame.Rect(194,531,410,119)
 
         self.mode = 0
+        
     def update(self):
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.mode == 1):
@@ -46,6 +47,7 @@ class Menu:
                 self.scene.is_paused = False
             elif(self.mode == 3):
                 self.scene.exit()
+
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
             if(self.rect_play.collidepoint(key.pos)):
                 self.mode = 1

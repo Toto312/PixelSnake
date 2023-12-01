@@ -20,22 +20,18 @@ class GameScene(scene.Scene):
 
         self.snake = snake.Snake(self)
         self.apple = apple.Apple(self)
-        self.add_object(self.apple)
-
-        self.apple.relocate_position(self.snake.snake_body.sprites())
-        
-        self.score = 0
-        self.is_paused = False
-        self.does_died = False
 
         self.menu = menu.Menu(self)
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
 
-        #im = image.Image([5,5])
-        #im().fill((255,255,255))
-        #self.rel_pos = gameobject.GameObject(im)
-        #self.rel_pos.change_position(self.snake.real_pos)
+        self.add_object(self.apple)
+
+        self.apple.relocate_position(self.snake.snake_body.sprites())
+        
+        self.score = 0
+        self.is_paused = True
+        self.does_died = False
 
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
@@ -87,8 +83,9 @@ class GameScene(scene.Scene):
         if(self.does_died):
             self.game_over.update(time_game.Time().dt)
             self.press_enter.is_active = True
-        #self.rel_pos.change_position(self.snake.real_pos)
+
         self.check_events()
+
         if(not self.is_paused):
             self.check_events_movement()
             self.snake.update()
@@ -104,10 +101,10 @@ class GameScene(scene.Scene):
     def draw(self, window):
         self.objects.draw(window)
         self.snake.snake_body.draw(window)
+
         if(self.does_died):
             self.game_over.draw(window)
             self.press_enter.draw(window)
-        #window.blit(self.rel_pos.image,self.rel_pos.rect[0:2])
     
         if(self.is_paused):
             self.menu.draw(self.screen)

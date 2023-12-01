@@ -13,6 +13,8 @@ if getattr(sys, 'frozen', False):
 class Game:
     def __init__(self):
         pygame.init()
+        icon = pygame.image.load("Resources/logo.ico")
+        pygame.display.set_icon(icon)
         self.screen = pygame.display.set_mode([800,800], pygame.RESIZABLE)
         self.event_handler = event_handler.EventHandler()
         self.scene_manager = scene_manager.SceneManager()
