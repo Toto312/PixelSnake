@@ -9,7 +9,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self.image = image()
         self.rect = self.image.get_rect(center=[0,0])
-    
+
     def scale(self, size: list[int,int]):
         self.image = pygame.transform.scale(self.image,size)
         

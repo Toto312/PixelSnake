@@ -1,5 +1,3 @@
-
-
 class Grid:
     def __init__(self, dimensions, size):
         self.dimensions = dimensions

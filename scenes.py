@@ -30,7 +30,7 @@ class GameScene(scene.Scene):
         self.press_enter = game_over.PressEnter()
         
         self.score = 0
-        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1], 50)
+        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
         self.is_paused = True
         self.does_died = False
 
@@ -77,7 +77,7 @@ class GameScene(scene.Scene):
 
     def update(self):
         self.score_font.change_text(f"{self.score}")
-        self.score_font.change_position([self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1])
+        self.score_font.change_position([self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1])
 
         if(self.does_died):
             self.game_over.update(time_game.Time().dt)

@@ -11,33 +11,37 @@ class Menu:
         img_def = image.Image("Resources/men.png")
         img_def().convert_alpha()
         self.sprite_default = gameobject.GameObject(img_def)
-        self.sprite_default.scale([600,600])
-        self.sprite_default.change_position([100,100])
+        self.sprite_default.scale([self.sprite_default.image.get_size()[0]*10,self.sprite_default.image.get_size()[1]*10])
+        self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
 
         img_play = image.Image("Resources/men1.png")
         img_play().convert_alpha()
         self.sprite_play = gameobject.GameObject(img_play)
-        self.sprite_play.scale([600,600])
-        self.sprite_play.change_position([100,100])
+        self.rect_play = pygame.Rect(10,140,450,130)
+        self.sprite_play.scale([self.sprite_play.image.get_size()[0]*10,self.sprite_play.image.get_size()[1]*10])
+        self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
+        self.rect_play.move_ip(self.sprite_play.rect[0:2])
 
         img_restart = image.Image("Resources/men2.png")
         img_restart().convert_alpha()
         self.sprite_restart = gameobject.GameObject(img_restart)
-        self.sprite_restart.scale([600,600])
-        self.sprite_restart.change_position([100,100])
+        self.rect_restart = pygame.Rect(10,280,450,130)
+        self.sprite_restart.scale([self.sprite_restart.image.get_size()[0]*10,self.sprite_restart.image.get_size()[1]*10])
+        self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
+        self.rect_restart.move_ip(self.sprite_restart.rect[0:2])
 
         img_exit = image.Image("Resources/men3.png")
         img_exit().convert_alpha()
         self.sprite_exit = gameobject.GameObject(img_exit)
-        self.sprite_exit.scale([600,600])
-        self.sprite_exit.change_position([100,100])
-
-        self.rect_play = pygame.Rect(194,269,410,119)
-        self.rect_restart = pygame.Rect(194,400,394,119)
-        self.rect_exit = pygame.Rect(194,531,410,119)
+        self.rect_exit = pygame.Rect(10,420,450,130)
+        self.sprite_exit.scale([self.sprite_exit.image.get_size()[0]*10,self.sprite_exit.image.get_size()[1]*10])
+        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
+        self.rect_exit.move_ip(self.sprite_exit.rect[0:2])
 
         self.mode = 0
         
+        self.debug = False
+
     def update(self):
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.mode == 1):
@@ -59,7 +63,6 @@ class Menu:
                 self.mode = 0
 
     def draw(self, window):
-        #pygame.draw.rect()
         if(self.mode == 0):
             window.blit(self.sprite_default.image,self.sprite_default.rect[0:2])
         elif(self.mode == 1):
@@ -68,6 +71,11 @@ class Menu:
             window.blit(self.sprite_restart.image,self.sprite_restart.rect[0:2])
         elif(self.mode == 3):
             window.blit(self.sprite_exit.image,self.sprite_exit.rect[0:2])
+        
+        if(self.debug):
+            pygame.draw.rect(window,(255,0,0),self.rect_play)
+            pygame.draw.rect(window,(255,0,0),self.rect_restart)
+            pygame.draw.rect(window,(255,0,0),self.rect_exit)
 
 
 
