@@ -8,6 +8,7 @@ import apple
 import menu
 import game_over
 import time_game
+import font
 
 class GameScene(scene.Scene):
     def __init__(self):
@@ -28,6 +29,7 @@ class GameScene(scene.Scene):
         self.press_enter = game_over.PressEnter()
         
         self.score = 0
+        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1], 50)
         self.is_paused = True
         self.does_died = False
 
@@ -35,12 +37,6 @@ class GameScene(scene.Scene):
         if(button := self.event_handler.check_events("Key down")):
             if(button.key == pygame.K_p):
                 self.is_paused = not self.is_paused
-
-    def restart(self):
-        self.score = 0
-        self.is_paused = False
-        self.apple.relocate_position(self.snake.snake_body.sprites())
-        self.does_died = True
 
     def check_events_movement(self):
         if(button := self.event_handler.check_events("Key down")):
@@ -58,6 +54,7 @@ class GameScene(scene.Scene):
                     self.restart()
 
     def restart(self):
+        self.score = 0
         self.does_died = False
         self.press_enter.is_active = False
         self.snake.init_body()
@@ -78,6 +75,9 @@ class GameScene(scene.Scene):
         self.does_died = True
 
     def update(self):
+        self.score_font.change_text(f"{self.score}")
+        self.score_font.change_position([self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1])
+
         if(self.does_died):
             self.game_over.update(time_game.Time().dt)
             self.press_enter.is_active = True
@@ -106,3 +106,5 @@ class GameScene(scene.Scene):
     
         if(self.is_paused):
             self.menu.draw(self.screen)
+
+        self.score_font.draw(window)
