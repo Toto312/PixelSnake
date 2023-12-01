@@ -12,11 +12,6 @@ class Game:
         self.event_handler = event_handler.EventHandler()
         self.scene_manager = scene_manager.SceneManager()
         self.time = time_game.Time()
-
-        #im = image.Image("men.png")
-        #self.sprite = gameobject.GameObject(im)
-        #self.sprite.scale([600,600])
-        #self.sprite.change_position([100,100])
   
         self.game_scene = scenes.GameScene()
         self.scene_manager.add_scene(self.game_scene)
@@ -52,7 +47,6 @@ class Game:
             # draw
             self.screen.fill((0,0,0))
             self.scene_manager.draw()
-            #self.screen.blit(self.sprite.image, self.sprite.rect[0:2])
             pygame.display.flip()
 
 if(__name__=="__main__"):
