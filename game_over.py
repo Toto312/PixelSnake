@@ -14,7 +14,7 @@ class GameOver:
         img().convert_alpha()
         self.sprite = gameobject.GameObject(img)
         self.sprite.scale([500,500])
-        self.sprite.move([400-(self.sprite.image.get_size()[0]/2+self.sprite.rect[0]),400-(self.sprite.image.get_size()[1]/2+self.sprite.rect[1])])
+        self.sprite.move([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0],pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
         self.sprite.image.set_alpha(0)
 
     def restart(self):
@@ -39,7 +39,7 @@ class PressEnter:
         img().convert_alpha()
         self.sprite = gameobject.GameObject(img)
         self.sprite.scale([500,500])
-        self.sprite.move([390-(self.sprite.image.get_size()[0]/2+self.sprite.rect[0]),400-(self.sprite.image.get_size()[1]/2+self.sprite.rect[1])])
+        self.sprite.move([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0]*0.5,pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
         self.sprite.image.set_alpha(0)
 
         self.is_active = False

@@ -17,7 +17,7 @@ class GameScene(scene.Scene):
 
         self.screen = pygame.display.get_surface()
         self.event_handler = event_handler.EventHandler()
-        self.grid = grid.Grid([50,50],[800,800])
+        self.grid = grid.Grid([50,50],[700,700])
         self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
 
         self.snake = snake.Snake(self)
@@ -30,7 +30,7 @@ class GameScene(scene.Scene):
         self.press_enter = game_over.PressEnter()
         
         self.score = 0
-        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
+        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.85,self.screen.get_size()[1]*0.1], 50)
         self.is_paused = True
         self.does_died = False
 
@@ -98,14 +98,15 @@ class GameScene(scene.Scene):
         sys.exit()
 
     def draw(self, window):
-        self.objects.draw(window)
-        self.snake.snake_body.draw(window)
+        pygame.draw.rect(self.screen,(45,45,45),self.limit,4,2)
+        self.objects.draw(self.screen)
+        self.snake.snake_body.draw(self.screen)
 
         if(self.does_died):
-            self.game_over.draw(window)
-            self.press_enter.draw(window)
+            self.game_over.draw(self.screen)
+            self.press_enter.draw(self.screen)
     
         if(self.is_paused):
             self.menu.draw(self.screen)
 
-        self.score_font.draw(window)
+        self.score_font.draw(self.screen)

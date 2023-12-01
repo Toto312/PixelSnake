@@ -18,7 +18,7 @@ class Game:
         icon = pygame.image.load("Resources/logo.ico")
         pygame.display.set_icon(icon)
         pygame.display.set_caption("Totris")
-        self.screen = pygame.display.set_mode([800,800], pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode([700,700], pygame.RESIZABLE)
 
         self.event_handler = event_handler.EventHandler()
         self.scene_manager = scene_manager.SceneManager()
@@ -42,11 +42,11 @@ class Game:
 
         if(video := self.event_handler.check_events("Video Resize")):
             width, height = video.size
-            if width < 600:
-                width = 600
-            if height < 600:
-                height = 600
-            self.screen = pygame.display.set_mode((width,height), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+            if width < 700:
+                width = 700
+            if height < 700:
+                height = 700
+            self.screen = pygame.display.set_mode((width,height), pygame.DOUBLEBUF|pygame.RESIZABLE)
 
     def mainloop(self):
         while True:
