@@ -81,7 +81,6 @@ class GameScene(scene.Scene):
         self.game_over.restart()
         self.does_died = True
 
-
     def update(self):
         if(self.does_died):
             self.game_over.update(time_game.Time().dt)
