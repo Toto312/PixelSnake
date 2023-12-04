@@ -16,13 +16,13 @@ class GameScene(scene.Scene):
         super().__init__("Game")
 
         self.screen = pygame.display.get_surface()
+        self.last_size = pygame.display.get_window_size()
         self.event_handler = event_handler.EventHandler()
         self.grid = grid.Grid([50,50],[700,700])
         self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
 
         self.snake = snake.Snake(self)
         self.apple = apple.Apple(self)
-        self.add_object(self.apple)
         self.apple.relocate_position(self.snake.snake_body.sprites())
 
         self.menu = menu.Menu(self)
@@ -53,26 +53,17 @@ class GameScene(scene.Scene):
             elif(button.key == 13):
                 if(self.does_died):
                     self.restart()
-
+ 
     def resize(self, size):
-        last_limit_position = self.limit[0:2]
+        last_limit_position = self.limit[:]
         if size[0] == 700:
             self.limit.x = 0
         else:
-            self.limit.x = round(abs(self.limit.width - size[0]) / 2)
+            self.limit.x = (size[0] - self.last_size[0]) / 2
         if size[1] == 700:
             self.limit.y = 0
         else:
-            self.limit.y = round(abs(self.limit.height - size[1]) / 2)
-            
-        self.grid.resize(self.limit)
-        
-        for i in self.snake.snake_body.sprites():
-            i.rect.x += i.rect.x - self.grid.ret_coord_world(i.rect[0:2])[0]
-            i.rect.y += i.rect.y - self.grid.ret_coord_world(i.rect[0:2])[1]
-
-        self.apple.rect.x += self.limit.x - last_limit_position[0]
-        self.apple.rect.y += self.limit.y - last_limit_position[1]
+            self.limit.y = (size[1] - self.last_size[0]) / 2
 
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
@@ -82,12 +73,13 @@ class GameScene(scene.Scene):
         self.score = 0
         self.does_died = False
         self.press_enter.is_active = False
-        self.snake.init_body()
+        self.snake = snake.Snake(self)
         self.apple.relocate_position(self.snake.snake_body.sprites())
 
     def check_collision(self):
-        if(self.apple.rect.colliderect(self.snake.head)):
+        if(self.apple.rect.collidepoint(self.snake.head.rect[0:2])):
             self.snake.increment_body()
+            self.apple.on_collision(self.snake)
             self.apple.relocate_position(self.snake.snake_body.sprites())
             self.score += 1
 
@@ -121,10 +113,12 @@ class GameScene(scene.Scene):
         pygame.quit()
         sys.exit()
 
-    def draw(self, window):
+    def draw(self):
         pygame.draw.rect(self.screen,(45,45,45),self.limit,4,2)
-        self.objects.draw(self.screen)
-        self.snake.snake_body.draw(self.screen)
+
+        self.snake.draw(self.screen,self.limit)
+        print(self.limit[0:2])
+        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x,self.apple.rect[1]+self.limit.y))
 
         if(self.does_died):
             self.game_over.draw(self.screen)

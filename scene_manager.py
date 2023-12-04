@@ -24,4 +24,4 @@ class SceneManager:
         if(len(self.scenes)==0 or self.curr_scene_index<0 or self.curr_scene_index>=len(self.scenes)):
             return
 
-        self.scenes[self.curr_scene_index].draw(self.window)
+        self.scenes[self.curr_scene_index].draw()

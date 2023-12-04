@@ -14,7 +14,7 @@ class Apple(gameobject.GameObject):
         self.scene = scene
 
         self.change_position(self.scene.grid.ret_coord_grid([random.randint(0,self.scene.grid.max[0]),random.randint(0,self.scene.grid.max[1])]))
-    
+
     def on_collision(self, obj):
         if(isinstance(obj,snake.Snake)):
             obj.increment_body()

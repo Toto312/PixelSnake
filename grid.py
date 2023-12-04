@@ -13,17 +13,17 @@ class Grid:
         self.offset = limit[0:2]
 
     def ret_coord_grid(self, coord):
-        return [(coord[0]//self.dimensions[0]) * self.dimensions[0] + self.offset[0], (coord[1]//self.dimensions[1]) * self.dimensions[1] + self.offset[1]]
-
+        return [(coord[0]//self.dimensions[0]) * self.dimensions[0], (coord[1]//self.dimensions[1]) * self.dimensions[1]]
+    
     def ret_grid(self,coord):
-        return [(coord[0]//self.dimensions[0]) + self.offset[0], (coord[1]//self.dimensions[1]) + self.offset[1]]
+        return [(coord[0]//self.dimensions[0]), (coord[1]//self.dimensions[1])]
 
     def ret_coord_world(self,coord):
-        return [coord[0] * self.dimensions[0] + self.offset[0],coord[1] * self.dimensions[1] + self.offset[1]]
+        return [coord[0] * self.dimensions[0],coord[1] * self.dimensions[1]]
     
 if(__name__=="__main__"):
     g = Grid([25,25],[500,500])
     g.resize([15,20,500,500])
     print(g.ret_coord_grid([25,0]))
     g.resize([100,10,500,500])
-    print(g.ret_coord_grid([25,0]))
+    print(g.ret_coord_grid([250,250]))

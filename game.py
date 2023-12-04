@@ -45,7 +45,7 @@ class Game:
             if(width < 700 or height < 700):
                 width = 700
                 height = 700
-            self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode( (width,height), pygame.RESIZABLE)
             self.game_scene.resize([width,height])
 
     def mainloop(self):

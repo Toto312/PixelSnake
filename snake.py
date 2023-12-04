@@ -11,10 +11,7 @@ class Snake:
         self.color = (240,70,61)
         self.speed = 0.28
 
-        self.init_body()
-
-    def init_body(self):
-        self.real_pos = self.scene.grid.ret_coord_grid([self.scene.grid.size[0]/2,self.scene.grid.size[1]/2])
+        self.real_pos = self.scene.grid.ret_coord_grid([self.scene.limit[2]/2,self.scene.limit[3]/2])
         self.snake_body = pygame.sprite.Group()
 
         self.surface = image.Image([45,45])
@@ -31,6 +28,21 @@ class Snake:
 
         self.sprite_to_add = None
         self.collided_itself = False
+
+    def restart(self):
+        self.snake_body.empty()
+
+        self.real_pos = self.scene.grid.ret_coord_grid([self.scene.limit[2]-30,self.scene.limit[3]-30])
+
+        self.surface = image.Image([45,45])
+        self.surface().fill(self.color)
+        self.head = gameobject.GameObject(self.surface)
+        self.head.change_position(self.real_pos)
+        self.snake_body.add(self.head)
+
+        # first value is time in milliseconds, the second value is the coord
+        self.direction = [80, [-1,0]]
+        self.last_direction = [0, [-1,0]]
 
     def increment_body(self):
         sprites = gameobject.GameObject(self.surface)
@@ -52,8 +64,6 @@ class Snake:
     def is_colliding(self, rect):
         if(self.real_pos[0]+10>rect.width or self.real_pos[0]-10<0 or
            self.real_pos[1]+10>rect.height or self.real_pos[1]-10<0):
-            #print("right:",self.real_pos[0]+10>rect.width,"\nleft:",self.real_pos[0]-10<0,
-            #      "\nbottom:",self.real_pos[1]+10>rect.height,"\ntop:",self.real_pos[1]-10<0)
             return True
         return False
 
@@ -79,6 +89,9 @@ class Snake:
         else:
             self.scene.it_died()
 
+    def draw(self,window,offset=[0,0]):
+        for i in self.snake_body.sprites():
+            window.blit(i.image,(i.rect[0]+offset[0],i.rect[1]+offset[1]))
 
     def move(self):
         last_pos = self.head.rect[0:2]
