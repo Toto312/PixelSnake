@@ -14,7 +14,7 @@ class EventHandler(metaclass=utils.SingletonMeta):
 		self.events = {pygame.KEYDOWN: None, pygame.QUIT: None, pygame.MOUSEMOTION: None, pygame.MOUSEBUTTONDOWN:None, pygame.MOUSEBUTTONUP:None,pygame.VIDEORESIZE:None}
 		self.event_types = {"Key down": pygame.KEYDOWN, "Key up" : pygame.KEYUP, "Quit": pygame.QUIT, "Mouse motion": pygame.MOUSEMOTION,
 					  "Mouse button down": pygame.MOUSEBUTTONDOWN, "Mouse button up": pygame.MOUSEBUTTONUP,
-					  "Video Resize" : pygame.VIDEORESIZE}
+					  "Video resize" : pygame.VIDEORESIZE}
 		
 		self.is_control_key_pressed = False
 

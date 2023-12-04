@@ -14,7 +14,7 @@ class Snake:
         self.init_body()
 
     def init_body(self):
-        self.real_pos = [500,500]
+        self.real_pos = self.scene.grid.ret_coord_grid([self.scene.grid.size[0]/2,self.scene.grid.size[1]/2])
         self.snake_body = pygame.sprite.Group()
 
         self.surface = image.Image([45,45])
@@ -39,13 +39,21 @@ class Snake:
 
         self.sprite_to_add = sprites
 
+    def change_position(self, pos):
+        for i in self.snake_body.sprites():
+            i.change_position(pos)
+
+        self.real_pos = self.snake_body.sprites()[0]
+
     def change_direction(self, direction):
         self.last_direction = self.direction
         self.direction = [pygame.time.get_ticks(), direction]
 
     def is_colliding(self, rect):
-        if(self.real_pos[0]+round(self.head.rect[2]/2)>rect.width or self.real_pos[0]<=rect.x or
-           self.real_pos[1]+round(self.head.rect[3]/2)>rect.height or self.real_pos[1]<=rect.y):
+        if(self.real_pos[0]+10>rect.width or self.real_pos[0]-10<0 or
+           self.real_pos[1]+10>rect.height or self.real_pos[1]-10<0):
+            #print("right:",self.real_pos[0]+10>rect.width,"\nleft:",self.real_pos[0]-10<0,
+            #      "\nbottom:",self.real_pos[1]+10>rect.height,"\ntop:",self.real_pos[1]-10<0)
             return True
         return False
 
@@ -61,7 +69,7 @@ class Snake:
             self.snake_body.add(self.sprite_to_add)
             self.sprite_to_add = None
 
-        #adding an offset when changing direction
+        #adding an offset time when changing direction
         if((self.direction[1][0] == -self.last_direction[1][0] and self.direction[1][1] == -self.last_direction[1][1]) or
            self.direction[0]-self.last_direction[0]<120):
             self.direction = self.last_direction

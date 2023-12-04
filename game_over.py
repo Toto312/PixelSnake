@@ -17,6 +17,9 @@ class GameOver:
         self.sprite.move([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0],pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
         self.sprite.image.set_alpha(0)
 
+    def center(self):
+        self.sprite.change_position([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0],pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
+
     def restart(self):
         self.open_time = pygame.time.get_ticks()+500**2
 
@@ -43,6 +46,9 @@ class PressEnter:
         self.sprite.image.set_alpha(0)
 
         self.is_active = False
+
+    def center(self):
+        self.sprite.change_position([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0],pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
 
     def restart(self):
         self.open_time = pygame.time.get_ticks()+1000

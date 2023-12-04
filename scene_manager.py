@@ -6,6 +6,10 @@ class SceneManager:
         self.scenes = []
         self.curr_scene_index = 0
 
+    def resize(self, size):
+        for i in self.scenes:
+            i.resize(size)
+
     def add_scene(self, scene):
         self.scenes.append(scene)
         self.scenes[self.curr_scene_index].is_active = False

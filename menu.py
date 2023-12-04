@@ -42,6 +42,21 @@ class Menu:
         
         self.debug = False
 
+    def resize(self):
+        self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
+
+        self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
+        self.rect_play.x += self.sprite_play.rect[0] - self.rect_play.x + 10
+        self.rect_play.y += self.sprite_play.rect[1] - self.rect_play.y + 140
+
+        self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
+        self.rect_restart.x += self.sprite_restart.rect[0] - self.rect_restart.x + 10
+        self.rect_restart.y += self.sprite_restart.rect[1] - self.rect_restart.y + 280
+
+        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
+        self.rect_exit.x += self.sprite_exit.rect[0] - self.rect_exit.x + 10
+        self.rect_exit.y += self.sprite_exit.rect[1] - self.rect_exit.y + 420
+
     def update(self):
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.mode == 1):
@@ -76,7 +91,3 @@ class Menu:
             pygame.draw.rect(window,(255,0,0),self.rect_play)
             pygame.draw.rect(window,(255,0,0),self.rect_restart)
             pygame.draw.rect(window,(255,0,0),self.rect_exit)
-
-
-
-

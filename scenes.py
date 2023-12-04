@@ -54,6 +54,30 @@ class GameScene(scene.Scene):
                 if(self.does_died):
                     self.restart()
 
+    def resize(self, size):
+        last_limit_position = self.limit[0:2]
+        if size[0] == 700:
+            self.limit.x = 0
+        else:
+            self.limit.x = round(abs(self.limit.width - size[0]) / 2)
+        if size[1] == 700:
+            self.limit.y = 0
+        else:
+            self.limit.y = round(abs(self.limit.height - size[1]) / 2)
+            
+        self.grid.resize(self.limit)
+        
+        for i in self.snake.snake_body.sprites():
+            i.rect.x += i.rect.x - self.grid.ret_coord_world(i.rect[0:2])[0]
+            i.rect.y += i.rect.y - self.grid.ret_coord_world(i.rect[0:2])[1]
+
+        self.apple.rect.x += self.limit.x - last_limit_position[0]
+        self.apple.rect.y += self.limit.y - last_limit_position[1]
+
+        self.game_over = game_over.GameOver()
+        self.press_enter = game_over.PressEnter()
+        self.menu.resize()
+
     def restart(self):
         self.score = 0
         self.does_died = False

@@ -9,6 +9,9 @@ class Scene:
 
         self.objects = pygame.sprite.Group()
         
+    def resize(self, size):
+        pass
+
     def add_object(self, obj):
         if(isinstance(obj,sprite.Sprite)):
             self.objects.add(obj)

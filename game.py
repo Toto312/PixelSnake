@@ -40,13 +40,13 @@ class Game:
                 pygame.quit()
                 sys.exit()
 
-        if(video := self.event_handler.check_events("Video Resize")):
+        if(video := self.event_handler.check_events("Video resize")):
             width, height = video.size
-            if width < 700:
+            if(width < 700 or height < 700):
                 width = 700
-            if height < 700:
                 height = 700
-            self.screen = pygame.display.set_mode((width,height), pygame.DOUBLEBUF|pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
+            self.game_scene.resize([width,height])
 
     def mainloop(self):
         while True:

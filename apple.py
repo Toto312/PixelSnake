@@ -34,4 +34,3 @@ class Apple(gameobject.GameObject):
                 break
 
         self.change_position(choosed)
-
