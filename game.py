@@ -17,7 +17,7 @@ class Game:
 
         icon = pygame.image.load("Resources/logo.ico")
         pygame.display.set_icon(icon)
-        pygame.display.set_caption("Totris")
+        pygame.display.set_caption("PixelSnake")
         self.screen = pygame.display.set_mode([700,700], pygame.RESIZABLE)
 
         self.event_handler = event_handler.EventHandler()
