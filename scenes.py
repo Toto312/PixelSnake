@@ -106,8 +106,10 @@ class GameScene(scene.Scene):
     def update(self):
         if(not pygame.mixer.music.get_busy()):
             next = (self.music.index(self.now_playing)+1)//(len(self.music)-1)
+            print(next)
             self.now_playing = self.music[next]
             pygame.mixer.music.load(self.now_playing)
+            pygame.mixer.music.play()
 
         self.score_font.change_text(f"{self.score}")
         self.score_font.change_position([self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1])
@@ -134,7 +136,6 @@ class GameScene(scene.Scene):
         pygame.draw.rect(self.screen,(45,45,45),self.limit,4,2)
 
         self.snake.draw(self.screen,self.limit)
-        print(self.limit[0:2])
         self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x,self.apple.rect[1]+self.limit.y))
 
         if(self.does_died):
@@ -145,3 +146,11 @@ class GameScene(scene.Scene):
             self.menu.draw(self.screen)
 
         self.score_font.draw(self.screen)
+
+class MenuScene(scene.Scene):
+    def __init__(self):
+        super().__init__("Menu")
+
+        self.screen = pygame.display.get_surface()
+        self.event_handler = event_handler.EventHandler()
+        
