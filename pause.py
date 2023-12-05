@@ -4,17 +4,17 @@ import gameobject
 import image
 import event_handler
 
-class Menu:
+class Pause:
     def __init__(self, scene):
         self.scene = scene
 
-        img_def = image.Image("Resources/men.png")
+        img_def = image.Image("Resources/pause.png")
         img_def().convert_alpha()
         self.sprite_default = gameobject.GameObject(img_def)
         self.sprite_default.scale([self.sprite_default.image.get_size()[0]*10,self.sprite_default.image.get_size()[1]*10])
         self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
 
-        img_play = image.Image("Resources/men1.png")
+        img_play = image.Image("Resources/pause1.png")
         img_play().convert_alpha()
         self.sprite_play = gameobject.GameObject(img_play)
         self.rect_play = pygame.Rect(10,140,450,130)
@@ -22,7 +22,7 @@ class Menu:
         self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
         self.rect_play.move_ip(self.sprite_play.rect[0:2])
 
-        img_restart = image.Image("Resources/men2.png")
+        img_restart = image.Image("Resources/pause2.png")
         img_restart().convert_alpha()
         self.sprite_restart = gameobject.GameObject(img_restart)
         self.rect_restart = pygame.Rect(10,280,450,130)
@@ -30,7 +30,7 @@ class Menu:
         self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
         self.rect_restart.move_ip(self.sprite_restart.rect[0:2])
 
-        img_exit = image.Image("Resources/men3.png")
+        img_exit = image.Image("Resources/pause3.png")
         img_exit().convert_alpha()
         self.sprite_exit = gameobject.GameObject(img_exit)
         self.rect_exit = pygame.Rect(10,420,450,130)

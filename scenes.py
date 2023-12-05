@@ -7,7 +7,7 @@ import snake
 import grid
 import event_handler
 import apple
-import menu
+import pause
 import game_over
 import time_game
 import font
@@ -26,7 +26,7 @@ class GameScene(scene.Scene):
         self.apple = apple.Apple(self)
         self.apple.relocate_position(self.snake.snake_body.sprites())
 
-        self.menu = menu.Menu(self)
+        self.pause = pause.Pause(self)
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
         
@@ -78,7 +78,7 @@ class GameScene(scene.Scene):
 
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
-        self.menu.resize()
+        self.pause.resize()
 
     def restart(self):
         self.score = 0
@@ -126,7 +126,7 @@ class GameScene(scene.Scene):
             self.check_collision()
             self.press_enter.update(time_game.Time().dt)
         else: 
-            self.menu.update()
+            self.pause.update()
 
     def exit(self):
         pygame.quit()
@@ -143,7 +143,7 @@ class GameScene(scene.Scene):
             self.press_enter.draw(self.screen)
     
         if(self.is_paused):
-            self.menu.draw(self.screen)
+            self.pause.draw(self.screen)
 
         self.score_font.draw(self.screen)
 
