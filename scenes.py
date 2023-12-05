@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 import scene
 import snake
@@ -34,6 +35,15 @@ class GameScene(scene.Scene):
         self.is_paused = True
         self.does_died = False
 
+        self.increment_sound = pygame.mixer.Sound("Resources/increment.mp3")
+        self.die_sound = pygame.mixer.Sound("Resources/died.mp3")
+        self.died_sound_played = False
+
+        self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
+        self.now_playing = random.choice(self.music)
+        pygame.mixer.music.load(random.choice(self.music))
+        pygame.mixer.music.play()
+
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
             if(button.key == pygame.K_p):
@@ -53,6 +63,7 @@ class GameScene(scene.Scene):
             elif(button.key == 13):
                 if(self.does_died):
                     self.restart()
+                    self.died_sound_played = False
  
     def resize(self, size):
         last_limit_position = self.limit[:]
@@ -79,19 +90,25 @@ class GameScene(scene.Scene):
     def check_collision(self):
         if(self.apple.rect.collidepoint(self.snake.head.rect[0:2])):
             self.snake.increment_body()
-            self.apple.on_collision(self.snake)
             self.apple.relocate_position(self.snake.snake_body.sprites())
             self.score += 1
+            self.increment_sound.play()
 
-    def add_score(self):
-        self.score += 1
 
     def it_died(self):
+        if(not self.died_sound_played):
+            self.die_sound.play()
+            self.died_sound_played = True
         self.press_enter.restart()
         self.game_over.restart()
         self.does_died = True
 
     def update(self):
+        if(not pygame.mixer.music.get_busy()):
+            next = (self.music.index(self.now_playing)+1)//(len(self.music)-1)
+            self.now_playing = self.music[next]
+            pygame.mixer.music.load(self.now_playing)
+
         self.score_font.change_text(f"{self.score}")
         self.score_font.change_position([self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1])
 

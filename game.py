@@ -47,7 +47,7 @@ class Game:
                 height = 700
             self.screen = pygame.display.set_mode( (width,height), pygame.RESIZABLE)
             self.game_scene.resize([width,height])
-
+            
     def mainloop(self):
         while True:
             self.time.update()
