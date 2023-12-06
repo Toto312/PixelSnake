@@ -25,6 +25,8 @@ class Game:
         self.time = time_game.Time()
   
         self.game_scene = scenes.GameScene()
+        #self.menu_scene = scenes.MenuScene()
+        #self.scene_manager.add_scene(self.menu_scene)
         self.scene_manager.add_scene(self.game_scene)
 
         self.debug = debug.DebugInfo(self.screen)
@@ -35,6 +37,9 @@ class Game:
             sys.exit()
 
         if(key := self.event_handler.check_events("Key down")):
+            # F1
+            if(key.scancode == 58):
+                self.debug.is_active = not self.debug.is_active
             # F4
             if(key.scancode == 61):
                 pygame.quit()

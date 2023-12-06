@@ -153,4 +153,9 @@ class MenuScene(scene.Scene):
 
         self.screen = pygame.display.get_surface()
         self.event_handler = event_handler.EventHandler()
-        
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
