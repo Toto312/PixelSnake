@@ -49,7 +49,7 @@ class Pause:
         img_music_on = image.Image("Resources/music_on.png")
         img_music_on().convert_alpha()
         self.sprite_music_on = gameobject.GameObject(img_music_on)
-        self.rect_music_on = pygame.Rect(0,0,46*2,41*2)
+        self.rect_music_on = pygame.Rect(0,0,34*2,29*2)
         self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
         self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
         self.rect_music_on.move_ip(self.sprite_music_on.rect[0:2])    
@@ -73,9 +73,12 @@ class Pause:
         self.rect_exit.x += self.sprite_exit.rect[0] - self.rect_exit.x + 10
         self.rect_exit.y += self.sprite_exit.rect[1] - self.rect_exit.y + 420
 
-        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
-        self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x + 46*2
-        self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y + 41*2
+        print(self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1])
+        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[1]-self.sprite_music_on.image.get_size()[1]])
+        self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x
+        self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y
+
+        self.is_music_on = True
 
     def update(self):
         if(key := event_handler.EventHandler().check_events("Key down")):
@@ -95,8 +98,16 @@ class Pause:
             if(self.rect_music_on.collidepoint(key.pos)):
                 if(pygame.mixer.music.get_busy()):
                     pygame.mixer.music.pause()
+                    img_music_off = image.Image("Resources/music_off.png")
+                    img_music_off().convert_alpha()
+                    self.sprite_music_on.image = img_music_off()
+                    self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
                 else:
                     pygame.mixer.music.unpause()
+                    img_music_on = image.Image("Resources/music_on.png")
+                    img_music_on().convert_alpha()
+                    self.sprite_music_on.image = img_music_on()
+                    self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
             
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
             if(self.rect_play.collidepoint(key.pos)):
