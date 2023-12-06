@@ -138,7 +138,8 @@ class GameScene(scene.Scene):
         pygame.draw.rect(self.screen,(45,45,45),self.limit,4,2)
 
         self.snake.draw(self.screen,self.limit)
-        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x,self.apple.rect[1]+self.limit.y))
+        #the +2 its because the snake touches the topleft since its size is 46 instead of 50 (for aesthetic purposes)
+        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+2,self.apple.rect[1]+self.limit.y+2))
 
         if(self.does_died):
             self.game_over.draw(self.screen)

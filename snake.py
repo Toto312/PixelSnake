@@ -14,7 +14,7 @@ class Snake:
         self.real_pos = self.scene.grid.ret_coord_grid([self.scene.limit[2]/2,self.scene.limit[3]/2])
         self.snake_body = pygame.sprite.Group()
 
-        self.surface = image.Image([45,45])
+        self.surface = image.Image([46,46])
         self.surface().fill(self.color)
         head = gameobject.GameObject(self.surface)
         head.move(self.real_pos)
@@ -91,7 +91,8 @@ class Snake:
 
     def draw(self,window,offset=[0,0]):
         for i in self.snake_body.sprites():
-            window.blit(i.image,(i.rect[0]+offset[0],i.rect[1]+offset[1]))
+            #the +2 its because the snake touches the topleft since its size is 46 instead of 50 (for aesthetic purposes)
+            window.blit(i.image,(i.rect[0]+offset[0]+2,i.rect[1]+offset[1]+2))
 
     def move(self):
         last_pos = self.head.rect[0:2]

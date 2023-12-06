@@ -7,7 +7,7 @@ import snake
 class Apple(gameobject.GameObject):
     def __init__(self, scene):
         self.color = (58,224,189)
-        img = image.Image([45,45])
+        img = image.Image([46,46])
         img().fill(self.color)
         super().__init__(img)
 
