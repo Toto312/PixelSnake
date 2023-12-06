@@ -10,7 +10,6 @@ class Scene:
 
 class SceneManager:
     def __init__(self):
-        #self.window = pygame.display.get_surface()
         self.scenes = {}
         self.curr_scene = None
 
