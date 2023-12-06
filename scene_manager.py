@@ -1,13 +1,5 @@
 import pygame
 
-class Scene:
-    def __init__(self,name):
-        self.name = name
-    def update(self):
-        pass
-    def draw(self):
-        pass
-
 class SceneManager:
     def __init__(self):
         self.scenes = {}
@@ -38,12 +30,3 @@ class SceneManager:
             return
 
         self.scenes[self.curr_scene_index].draw()
-
-if (__name__=="__main__"):
-    sm = SceneManager()
-    s = Scene("Hola")
-    s1 = Scene("Chau")
-    sm.add_scene(s)
-    sm.add_scene(s1)
-    sm.change_scene("si")
-    print(sm.curr_scene.name)
