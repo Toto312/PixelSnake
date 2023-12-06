@@ -21,12 +21,7 @@ class SceneManager:
         self.curr_scene = scene
 
     def update(self):
-        if(len(self.scenes)==0 or self.curr_scene_index<0 or self.curr_scene_index>=len(self.scenes)):
-            return
-        self.scenes[self.curr_scene_index].update()
+        self.curr_scene.update()
     
     def draw(self):
-        if(len(self.scenes)==0 or self.curr_scene_index<0 or self.curr_scene_index>=len(self.scenes)):
-            return
-
-        self.scenes[self.curr_scene_index].draw()
+        self.curr_scene.draw()
