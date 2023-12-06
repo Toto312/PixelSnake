@@ -1,6 +1,8 @@
 import pygame
 
-class SceneManager:
+import utils
+
+class SceneManager(metaclass=utils.SingletonMeta):
     def __init__(self):
         self.scenes = {}
         self.curr_scene = None

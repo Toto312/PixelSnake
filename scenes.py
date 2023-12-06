@@ -102,7 +102,6 @@ class GameScene(scene.Scene):
             self.score += 1
             self.increment_sound.play()
 
-
     def it_died(self):
         if(not self.died_sound_played):
             self.die_sound.play()

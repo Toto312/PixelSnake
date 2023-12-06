@@ -1,18 +1,15 @@
 import random
 
 import gameobject
-import image
 import snake
 
 class Apple(gameobject.GameObject):
     def __init__(self, scene):
         self.color = (58,224,189)
-        img = image.Image([46,46])
-        img().fill(self.color)
-        super().__init__(img)
-
         self.scene = scene
 
+        super().__init__([46,46])
+        self.image.fill(self.color)
         self.change_position(self.scene.grid.ret_coord_grid([random.randint(0,self.scene.grid.max[0]),random.randint(0,self.scene.grid.max[1])]))
 
     def on_collision(self, obj):

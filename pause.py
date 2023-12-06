@@ -3,52 +3,39 @@ import pygame
 import gameobject
 import image
 import event_handler
+import scene_manager
 
 class Pause:
     def __init__(self, scene):
         self.scene = scene
 
-        img_def = image.Image("Resources/pause.png")
-        img_def().convert_alpha()
-        self.sprite_default = gameobject.GameObject(img_def)
+        self.images = ["Resources/pause.png","Resources/pause1.png","Resources/pause2.png","Resources/pause3.png"]
+
+        self.button_music = {"on" : "Resources/music_on.png", "off" : "Resources/music_off.png"}
+
+        self.sprite_default = gameobject.GameObject("Resources/pause.png")
         self.sprite_default.scale([self.sprite_default.image.get_size()[0]*10,self.sprite_default.image.get_size()[1]*10])
         self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
 
-        img_play = image.Image("Resources/pause1.png")
-        img_play().convert_alpha()
-        self.sprite_play = gameobject.GameObject(img_play)
+        self.sprite_play = gameobject.GameObject("Resources/pause1.png")
         self.rect_play = pygame.Rect(10,140,450,130)
         self.sprite_play.scale([self.sprite_play.image.get_size()[0]*10,self.sprite_play.image.get_size()[1]*10])
         self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
         self.rect_play.move_ip(self.sprite_play.rect[0:2])
 
-        img_restart = image.Image("Resources/pause2.png")
-        img_restart().convert_alpha()
-        self.sprite_restart = gameobject.GameObject(img_restart)
+        self.sprite_restart = gameobject.GameObject("Resources/pause2.png")
         self.rect_restart = pygame.Rect(10,280,450,130)
         self.sprite_restart.scale([self.sprite_restart.image.get_size()[0]*10,self.sprite_restart.image.get_size()[1]*10])
         self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
         self.rect_restart.move_ip(self.sprite_restart.rect[0:2])
 
-        img_exit = image.Image("Resources/pause3.png")
-        img_exit().convert_alpha()
-        self.sprite_exit = gameobject.GameObject(img_exit)
+        self.sprite_exit = gameobject.GameObject("Resources/pause3.png")
         self.rect_exit = pygame.Rect(10,420,450,130)
         self.sprite_exit.scale([self.sprite_exit.image.get_size()[0]*10,self.sprite_exit.image.get_size()[1]*10])
         self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
         self.rect_exit.move_ip(self.sprite_exit.rect[0:2])
 
-        img_exit = image.Image("Resources/pause3.png")
-        img_exit().convert_alpha()
-        self.sprite_exit = gameobject.GameObject(img_exit)
-        self.rect_exit = pygame.Rect(10,420,450,130)
-        self.sprite_exit.scale([self.sprite_exit.image.get_size()[0]*10,self.sprite_exit.image.get_size()[1]*10])
-        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
-        self.rect_exit.move_ip(self.sprite_exit.rect[0:2])    
-
-        img_music_on = image.Image("Resources/music_on.png")
-        img_music_on().convert_alpha()
-        self.sprite_music_on = gameobject.GameObject(img_music_on)
+        self.sprite_music_on = gameobject.GameObject("Resources/music_on.png")
         self.rect_music_on = pygame.Rect(0,0,34*2,29*2)
         self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
         self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
@@ -73,7 +60,6 @@ class Pause:
         self.rect_exit.x += self.sprite_exit.rect[0] - self.rect_exit.x + 10
         self.rect_exit.y += self.sprite_exit.rect[1] - self.rect_exit.y + 420
 
-        print(self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1])
         self.sprite_music_on.change_position([0,self.scene.screen.get_size()[1]-self.sprite_music_on.image.get_size()[1]])
         self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x
         self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y
@@ -99,14 +85,12 @@ class Pause:
                 if(pygame.mixer.music.get_busy()):
                     pygame.mixer.music.pause()
                     img_music_off = image.Image("Resources/music_off.png")
-                    img_music_off().convert_alpha()
-                    self.sprite_music_on.image = img_music_off()
+                    self.sprite_music_on.image = img_music_off.image
                     self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
                 else:
                     pygame.mixer.music.unpause()
                     img_music_on = image.Image("Resources/music_on.png")
-                    img_music_on().convert_alpha()
-                    self.sprite_music_on.image = img_music_on()
+                    self.sprite_music_on.image = img_music_on.image
                     self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
             
         if(key := event_handler.EventHandler().check_events("Mouse motion")):

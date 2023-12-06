@@ -14,8 +14,8 @@ class Snake:
         self.real_pos = self.scene.grid.ret_coord_grid([self.scene.limit[2]/2,self.scene.limit[3]/2])
         self.snake_body = pygame.sprite.Group()
 
-        self.surface = image.Image([46,46])
-        self.surface().fill(self.color)
+        self.surface = image.get_surface([46,46])
+        self.surface.fill(self.color)
         head = gameobject.GameObject(self.surface)
         head.move(self.real_pos)
 
@@ -34,8 +34,8 @@ class Snake:
 
         self.real_pos = self.scene.grid.ret_coord_grid([self.scene.limit[2]-30,self.scene.limit[3]-30])
 
-        self.surface = image.Image([45,45])
-        self.surface().fill(self.color)
+        self.surface = image.get_surface([46,46])
+        self.surface.fill(self.color)
         self.head = gameobject.GameObject(self.surface)
         self.head.change_position(self.real_pos)
         self.snake_body.add(self.head)

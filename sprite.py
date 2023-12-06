@@ -1,21 +1,20 @@
 import pygame
 
-import utils
 import image
 
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, image: image.Image):
+    def __init__(self, img):
         super().__init__()
-
-        self.image = image()
-        self.rect = self.image.get_rect(center=[0,0])
+        
+        self.image = image.get_surface(img)
+        self.rect = self.image.get_rect()
 
     def scale(self, size: list[int,int]):
         self.image = pygame.transform.scale(self.image,size)
         
         # make the position of the sprite the same as before scaling
         last_rect = self.rect
-        self.rect = self.image.get_rect(center=[0,0])
+        self.rect = self.image.get_rect()
         self.change_position(last_rect[0:2])
 
     def change_position(self, position: list[int,int]):
