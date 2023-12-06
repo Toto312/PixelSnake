@@ -19,6 +19,8 @@ class GameScene(scene.Scene):
         self.screen = pygame.display.get_surface()
         self.last_size = pygame.display.get_window_size()
         self.event_handler = event_handler.EventHandler()
+        self.event_handler.create_event("End music")
+
         self.grid = grid.Grid([50,50],[700,700])
         self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
 
@@ -41,8 +43,9 @@ class GameScene(scene.Scene):
 
         self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
         self.now_playing = random.choice(self.music)
-        pygame.mixer.music.load(random.choice(self.music))
+        pygame.mixer.music.load(self.now_playing)
         pygame.mixer.music.play()
+        pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
 
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
@@ -104,9 +107,8 @@ class GameScene(scene.Scene):
         self.does_died = True
 
     def update(self):
-        if(not pygame.mixer.music.get_busy()):
-            next = (self.music.index(self.now_playing)+1)//(len(self.music)-1)
-            print(next)
+        if(self.event_handler.check_events("End music")):
+            next = self.music.index(self.now_playing)-1
             self.now_playing = self.music[next]
             pygame.mixer.music.load(self.now_playing)
             pygame.mixer.music.play()

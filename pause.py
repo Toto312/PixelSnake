@@ -38,8 +38,24 @@ class Pause:
         self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
         self.rect_exit.move_ip(self.sprite_exit.rect[0:2])
 
+        img_exit = image.Image("Resources/pause3.png")
+        img_exit().convert_alpha()
+        self.sprite_exit = gameobject.GameObject(img_exit)
+        self.rect_exit = pygame.Rect(10,420,450,130)
+        self.sprite_exit.scale([self.sprite_exit.image.get_size()[0]*10,self.sprite_exit.image.get_size()[1]*10])
+        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
+        self.rect_exit.move_ip(self.sprite_exit.rect[0:2])    
+
+        img_music_on = image.Image("Resources/music_on.png")
+        img_music_on().convert_alpha()
+        self.sprite_music_on = gameobject.GameObject(img_music_on)
+        self.rect_music_on = pygame.Rect(0,0,46*2,41*2)
+        self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
+        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
+        self.rect_music_on.move_ip(self.sprite_music_on.rect[0:2])    
+
+
         self.mode = 0
-        
         self.debug = False
 
     def resize(self):
@@ -57,7 +73,16 @@ class Pause:
         self.rect_exit.x += self.sprite_exit.rect[0] - self.rect_exit.x + 10
         self.rect_exit.y += self.sprite_exit.rect[1] - self.rect_exit.y + 420
 
+        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
+        self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x + 46*2
+        self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y + 41*2
+
     def update(self):
+        if(key := event_handler.EventHandler().check_events("Key down")):
+            # F1
+            if(key.scancode == 58):
+                self.debug = not self.debug
+
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.mode == 1):
                 self.scene.is_paused = False
@@ -67,6 +92,12 @@ class Pause:
             elif(self.mode == 3):
                 self.scene.exit()
 
+            if(self.rect_music_on.collidepoint(key.pos)):
+                if(pygame.mixer.music.get_busy()):
+                    pygame.mixer.music.pause()
+                else:
+                    pygame.mixer.music.unpause()
+            
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
             if(self.rect_play.collidepoint(key.pos)):
                 self.mode = 1
@@ -87,7 +118,10 @@ class Pause:
         elif(self.mode == 3):
             window.blit(self.sprite_exit.image,self.sprite_exit.rect[0:2])
         
+        window.blit(self.sprite_music_on.image,self.sprite_music_on.rect[0:2])
+
         if(self.debug):
             pygame.draw.rect(window,(255,0,0),self.rect_play)
             pygame.draw.rect(window,(255,0,0),self.rect_restart)
             pygame.draw.rect(window,(255,0,0),self.rect_exit)
+            pygame.draw.rect(window,(255,0,0),self.rect_music_on)
