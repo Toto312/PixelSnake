@@ -32,7 +32,7 @@ class GameScene(scene.Scene):
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
         
-        self.score = 168
+        self.score = 0
         self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
         #threshold for the size of the score font
         self.score_threshold_x = self.score_font.surface.get_size()[0]
