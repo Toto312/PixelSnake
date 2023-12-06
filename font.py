@@ -34,6 +34,10 @@ class Font:
             self.surface = pygame.transform.scale(self.surface, value)
         self.rect = self.surface.get_rect()
 
+    def rotate(self,angle):
+        self.surface = pygame.transform.rotate(self.surface,angle) 
+        self.rect = self.surface.get_rect(center=self.rect[0:2])
+
     def change_color(self,color):
         self.color = color
         self.surface = self.font.render(self.text,True,self.color)

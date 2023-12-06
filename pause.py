@@ -78,7 +78,7 @@ class Pause:
         self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x
         self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y
 
-        self.is_music_on = True
+        self.is_music_on = False
 
     def update(self):
         if(key := event_handler.EventHandler().check_events("Key down")):

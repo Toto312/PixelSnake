@@ -32,8 +32,13 @@ class GameScene(scene.Scene):
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
         
-        self.score = 0
-        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.85,self.screen.get_size()[1]*0.1], 50)
+        self.score = 168
+        self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
+        #threshold for the size of the score font
+        self.score_threshold_x = self.score_font.surface.get_size()[0]
+        self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [self.screen.get_size()[0],self.screen.get_size()[1]*0.3], 60)
+        self.max_score_font.rotate(-45)
+
         self.is_paused = True
         self.does_died = False
 
@@ -114,8 +119,9 @@ class GameScene(scene.Scene):
             pygame.mixer.music.play()
 
         self.score_font.change_text(f"{self.score}")
-        self.score_font.change_position([self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1])
-
+        # the x value is the 9/10 of the screen minus the size of the number (if 2 digits it moves a bit to the left)
+        self.score_font.change_position([self.screen.get_size()[0]*0.9-(self.score_font.surface.get_size()[0]-self.score_threshold_x),self.screen.get_size()[1]*0.1])
+        
         if(self.does_died):
             self.game_over.update(time_game.Time().dt)
             self.press_enter.is_active = True
@@ -142,6 +148,8 @@ class GameScene(scene.Scene):
         self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+2,self.apple.rect[1]+self.limit.y+2))
 
         if(self.does_died):
+            if(self.score == 169):
+                self.max_score_font.draw(self.screen)
             self.game_over.draw(self.screen)
             self.press_enter.draw(self.screen)
     
