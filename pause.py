@@ -1,70 +1,76 @@
 import pygame
 
-import gameobject
-import image
+import sprite
 import event_handler
-import scene_manager
+
+class Button:
+    def __init__(self, position, size):
+        self.rect = pygame.Rect(position[0],position[1],size[0],size[1])
+
+    def move(self, position):
+        self.rect.move_ip(position)
+
+    def change_position(self, position):
+        self.rect.x = position[0]
+        self.rect.y = position[1]
+
+    def is_colliding(self, position):
+        return self.rect.collidepoint(position)
 
 class Pause:
     def __init__(self, scene):
         self.scene = scene
 
-        self.images = ["Resources/pause.png","Resources/pause1.png","Resources/pause2.png","Resources/pause3.png"]
+        self.initial_position = {"play" : [10,140], "restart" : [10,280], "exit" : [10,420]}
+        self.button_size = [450,130]
 
-        self.button_music = {"on" : "Resources/music_on.png", "off" : "Resources/music_off.png"}
+        # kinda a strange way to make buttons, but i made the pause a single image so ¯\_(ツ)_/¯
+        self.buttons = {"default" : [sprite.Sprite("Resources/pause.png"), None],
+                       "play" : [sprite.Sprite("Resources/pause1.png"), Button(self.initial_position["play"], self.button_size)],
+                       "restart" : [sprite.Sprite("Resources/pause2.png"), Button(self.initial_position["restart"], self.button_size)],
+                       "exit" : [sprite.Sprite("Resources/pause3.png"), Button(self.initial_position["exit"], self.button_size)]}
 
-        self.sprite_default = gameobject.GameObject("Resources/pause.png")
-        self.sprite_default.scale([self.sprite_default.image.get_size()[0]*10,self.sprite_default.image.get_size()[1]*10])
-        self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
+        # init menu buttons
+        for name,button in self.buttons.items():
+            button[0].scale([button[0].image.get_size()[0]*10,button[0].image.get_size()[1]*10])
+            button[0].change_position([self.scene.screen.get_size()[0]*0.5-button[0].image.get_size()[0]/2,
+                                   self.scene.screen.get_size()[1]*0.5-button[0].image.get_size()[1]/2])
+            if(name != "default"):
+                button[1].move(button[0].rect[0:2])
 
-        self.sprite_play = gameobject.GameObject("Resources/pause1.png")
-        self.rect_play = pygame.Rect(10,140,450,130)
-        self.sprite_play.scale([self.sprite_play.image.get_size()[0]*10,self.sprite_play.image.get_size()[1]*10])
-        self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
-        self.rect_play.move_ip(self.sprite_play.rect[0:2])
-
-        self.sprite_restart = gameobject.GameObject("Resources/pause2.png")
-        self.rect_restart = pygame.Rect(10,280,450,130)
-        self.sprite_restart.scale([self.sprite_restart.image.get_size()[0]*10,self.sprite_restart.image.get_size()[1]*10])
-        self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
-        self.rect_restart.move_ip(self.sprite_restart.rect[0:2])
-
-        self.sprite_exit = gameobject.GameObject("Resources/pause3.png")
-        self.rect_exit = pygame.Rect(10,420,450,130)
-        self.sprite_exit.scale([self.sprite_exit.image.get_size()[0]*10,self.sprite_exit.image.get_size()[1]*10])
-        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
-        self.rect_exit.move_ip(self.sprite_exit.rect[0:2])
-
-        self.sprite_music_on = gameobject.GameObject("Resources/music_on.png")
-        self.rect_music_on = pygame.Rect(0,0,34*2,29*2)
-        self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
-        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[0]-self.sprite_music_on.image.get_size()[1]])
-        self.rect_music_on.move_ip(self.sprite_music_on.rect[0:2])    
+        self.button_music_size = [68,58]
+        self.button_music = {"on" : [sprite.Sprite("Resources/music_on.png"), Button([0,0],self.button_music_size)],
+                             "off" : [sprite.Sprite("Resources/music_off.png"), Button([0,0],self.button_music_size)]}
 
 
-        self.mode = 0
+        # init music button
+        for button in self.button_music.values():
+            button[0].scale([button[0].image.get_size()[0]*2,
+                             button[0].image.get_size()[1]*2])
+            button[0].change_position([0,self.scene.screen.get_size()[0]-button[0].image.get_size()[1]])
+
+            button[1].move(button[0].rect[0:2])
+
+        self.actual_button_selected = None
+        self.actual_music_button_selected = "on"
+
         self.debug = False
 
     def resize(self):
-        self.sprite_default.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_default.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_default.image.get_size()[1]/2])
+        for name,button in self.buttons.items():
+            button[0].change_position([self.scene.screen.get_size()[0]*0.5 - button[0].image.get_size()[0]/2,
+                                       self.scene.screen.get_size()[1]*0.5 - button[0].image.get_size()[1]/2])
+            
+            # only change the button pos if the sprite isnt the default
+            if(name != "default"):
+                button[1].move([button[0].rect[0] - button[1].rect[0] + self.initial_position[name][0],
+                                button[0].rect[1] - button[1].rect[1] + self.initial_position[name][1]])
 
-        self.sprite_play.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_play.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_play.image.get_size()[1]/2])
-        self.rect_play.x += self.sprite_play.rect[0] - self.rect_play.x + 10
-        self.rect_play.y += self.sprite_play.rect[1] - self.rect_play.y + 140
-
-        self.sprite_restart.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_restart.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_restart.image.get_size()[1]/2])
-        self.rect_restart.x += self.sprite_restart.rect[0] - self.rect_restart.x + 10
-        self.rect_restart.y += self.sprite_restart.rect[1] - self.rect_restart.y + 280
-
-        self.sprite_exit.change_position([self.scene.screen.get_size()[0]*0.5-self.sprite_exit.image.get_size()[0]/2,self.scene.screen.get_size()[1]*0.5-self.sprite_exit.image.get_size()[1]/2])
-        self.rect_exit.x += self.sprite_exit.rect[0] - self.rect_exit.x + 10
-        self.rect_exit.y += self.sprite_exit.rect[1] - self.rect_exit.y + 420
-
-        self.sprite_music_on.change_position([0,self.scene.screen.get_size()[1]-self.sprite_music_on.image.get_size()[1]])
-        self.rect_music_on.x += self.sprite_music_on.rect[0] - self.rect_music_on.x
-        self.rect_music_on.y += self.sprite_music_on.rect[1] - self.rect_music_on.y
-
-        self.is_music_on = False
+        for button in self.button_music.values():
+            button[0].change_position([0,self.scene.screen.get_size()[1] - button[0].image.get_size()[1]])
+            
+            button[1].move([button[0].rect[0] - button[1].rect[0],
+                            button[0].rect[1] - button[1].rect[1]])
 
     def update(self):
         if(key := event_handler.EventHandler().check_events("Key down")):
@@ -72,51 +78,55 @@ class Pause:
             if(key.scancode == 58):
                 self.debug = not self.debug
 
+
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
-            if(self.mode == 1):
+            if(self.actual_button_selected == "play"):
                 self.scene.is_paused = False
-            elif(self.mode == 2):
+            elif(self.actual_button_selected == "restart"):
                 self.scene.restart()
                 self.scene.is_paused = False
-            elif(self.mode == 3):
+            elif(self.actual_button_selected == "exit"):
                 self.scene.exit()
 
-            if(self.rect_music_on.collidepoint(key.pos)):
-                if(pygame.mixer.music.get_busy()):
+            if(self.button_music[self.actual_music_button_selected][1].is_colliding(key.pos)):
+                if(self.actual_music_button_selected == "on" and pygame.mixer.music.get_busy()):
                     pygame.mixer.music.pause()
-                    img_music_off = image.Image("Resources/music_off.png")
-                    self.sprite_music_on.image = img_music_off.image
-                    self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
-                else:
+                    self.actual_music_button_selected = "off"
+
+                elif(self.actual_music_button_selected == "off" and not pygame.mixer.music.get_busy()):
                     pygame.mixer.music.unpause()
-                    img_music_on = image.Image("Resources/music_on.png")
-                    self.sprite_music_on.image = img_music_on.image
-                    self.sprite_music_on.scale([self.sprite_music_on.image.get_size()[0]*2,self.sprite_music_on.image.get_size()[1]*2])
-            
+                    self.actual_music_button_selected = "on"
+
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
-            if(self.rect_play.collidepoint(key.pos)):
-                self.mode = 1
-            elif(self.rect_restart.collidepoint(key.pos)):
-                self.mode = 2
-            elif(self.rect_exit.collidepoint(key.pos)):
-                self.mode = 3
+            if(self.buttons["play"][1].is_colliding(key.pos)):
+                self.actual_button_selected = "play"
+
+            elif(self.buttons["restart"][1].is_colliding(key.pos)):
+                self.actual_button_selected = "restart"
+
+            elif(self.buttons["exit"][1].is_colliding(key.pos)):
+                self.actual_button_selected = "exit"
+
             else:
-                self.mode = 0
+                self.actual_button_selected = None
 
     def draw(self, window):
-        if(self.mode == 0):
-            window.blit(self.sprite_default.image,self.sprite_default.rect[0:2])
-        elif(self.mode == 1):
-            window.blit(self.sprite_play.image,self.sprite_play.rect[0:2])
-        elif(self.mode == 2):
-            window.blit(self.sprite_restart.image,self.sprite_restart.rect[0:2])
-        elif(self.mode == 3):
-            window.blit(self.sprite_exit.image,self.sprite_exit.rect[0:2])
-        
-        window.blit(self.sprite_music_on.image,self.sprite_music_on.rect[0:2])
+        # if self.actual_button_selected == None, it means that there isnt buttons selected,
+        # so it draws the pause without a selected button
+        if(self.actual_button_selected == None):
+            window.blit(self.buttons["default"][0].image,
+                        self.buttons["default"][0].rect[0:2])
+        else:
+            window.blit(self.buttons[self.actual_button_selected][0].image,
+                        self.buttons[self.actual_button_selected][0].rect[0:2])
+
+        # draw button music
+        window.blit(self.button_music[self.actual_music_button_selected][0].image,
+                    self.button_music[self.actual_music_button_selected][0].rect[0:2])
 
         if(self.debug):
-            pygame.draw.rect(window,(255,0,0),self.rect_play)
-            pygame.draw.rect(window,(255,0,0),self.rect_restart)
-            pygame.draw.rect(window,(255,0,0),self.rect_exit)
-            pygame.draw.rect(window,(255,0,0),self.rect_music_on)
+            for name,i in self.buttons.items():
+                if(name != "default"):
+                    pygame.draw.rect(window,(255,0,0),i[1].rect)
+
+            pygame.draw.rect(window,(255,0,0),self.button_music[self.actual_music_button_selected][1].rect)

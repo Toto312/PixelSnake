@@ -54,18 +54,20 @@ class GameScene(scene.Scene):
 
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
-            if(button.key == pygame.K_p):
+            # ESC
+            if(button.key == 27):
                 self.is_paused = not self.is_paused
+
 
     def check_events_movement(self):
         if(button := self.event_handler.check_events("Key down")):
-            if(button.key == pygame.K_w):
+            if(button.key == pygame.K_w or button.key == pygame.K_UP):
                 self.snake.change_direction([0,-1])
-            elif(button.key == pygame.K_s):
+            elif(button.key == pygame.K_s or button.key == pygame.K_DOWN):
                 self.snake.change_direction([0,1])
-            elif(button.key == pygame.K_a):
+            elif(button.key == pygame.K_a or button.key == pygame.K_LEFT):
                 self.snake.change_direction([-1,0])
-            elif(button.key == pygame.K_d):
+            elif(button.key == pygame.K_d or button.key == pygame.K_RIGHT):
                 self.snake.change_direction([1,0])
             # enter
             elif(button.key == 13):
