@@ -1,6 +1,7 @@
 import os
 import sys
 import pygame
+import random
 
 import event_handler
 import scene_manager
@@ -23,13 +24,37 @@ class Game:
         self.event_handler = event_handler.EventHandler()
         self.scene_manager = scene_manager.SceneManager()
         self.time = time_game.Time()
+        self.debug = debug.DebugInfo(self.screen)
   
         self.game_scene = scenes.GameScene()
-        #self.menu_scene = scenes.MenuScene()
-        #self.scene_manager.add_scene(self.menu_scene)
         self.scene_manager.add_scene(self.game_scene)
+        
+        self.menu_scene = scenes.MenuScene()
+        self.scene_manager.add_scene(self.menu_scene)
 
-        self.debug = debug.DebugInfo(self.screen)
+        # Music
+        #self.event_handler.create_event("End music")
+        #self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
+        #self.now_playing = random.choice(self.music)
+        #pygame.mixer.music.load(self.now_playing)
+        #pygame.mixer.music.play()
+        #pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
+
+    def mainloop(self):
+        while True:
+            self.time.update()
+
+            # update events
+            self.debug.update()
+            self.event_handler.update()
+            self.check_game_events()
+            self.scene_manager.update()
+
+            # draw
+            self.screen.fill((0,0,0))
+            self.scene_manager.draw()
+            self.debug.draw()
+            pygame.display.flip()
 
     def check_game_events(self):
         if(self.event_handler.check_events("Quit")):
@@ -51,24 +76,20 @@ class Game:
                 width = 700
                 height = 700
             self.screen = pygame.display.set_mode( (width,height), pygame.RESIZABLE)
-            self.game_scene.resize([width,height])
+            self.scene_manager.resize([width,height])
             
-    def mainloop(self):
-        while True:
-            self.time.update()
+    def music_manager(self):
+        if(self.event_handler.check_events("End music")):
+            self.change_music()
 
-            # update events
-            self.debug.update()
-            self.event_handler.update()
-            self.check_game_events()
-            self.scene_manager.update()
+    def change_music(self):
+        pass
+        #next = self.music.index(self.now_playing)-1
+        #self.now_playing = self.music[next]
+        #pygame.mixer.music.load(self.now_playing)
+        #pygame.mixer.music.play()
 
-            # draw
-            self.screen.fill((0,0,0))
-            self.scene_manager.draw()
-            self.debug.draw()
-            pygame.display.flip()
-
+        
 if(__name__=="__main__"):
     g = Game()
     g.mainloop()

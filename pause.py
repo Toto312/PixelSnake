@@ -2,20 +2,8 @@ import pygame
 
 import sprite
 import event_handler
-
-class Button:
-    def __init__(self, position, size):
-        self.rect = pygame.Rect(position[0],position[1],size[0],size[1])
-
-    def move(self, position):
-        self.rect.move_ip(position)
-
-    def change_position(self, position):
-        self.rect.x = position[0]
-        self.rect.y = position[1]
-
-    def is_colliding(self, position):
-        return self.rect.collidepoint(position)
+import gui
+import scene_manager
 
 class Pause:
     def __init__(self, scene):
@@ -26,9 +14,9 @@ class Pause:
 
         # kinda a strange way to make buttons, but i made the pause a single image so ¯\_(ツ)_/¯
         self.buttons = {"default" : [sprite.Sprite("Resources/pause.png"), None],
-                       "play" : [sprite.Sprite("Resources/pause1.png"), Button(self.initial_position["play"], self.button_size)],
-                       "restart" : [sprite.Sprite("Resources/pause2.png"), Button(self.initial_position["restart"], self.button_size)],
-                       "exit" : [sprite.Sprite("Resources/pause3.png"), Button(self.initial_position["exit"], self.button_size)]}
+                       "play" : [sprite.Sprite("Resources/pause1.png"), gui.Button(self.initial_position["play"], self.button_size)],
+                       "restart" : [sprite.Sprite("Resources/pause2.png"), gui.Button(self.initial_position["restart"], self.button_size)],
+                       "exit" : [sprite.Sprite("Resources/pause3.png"), gui.Button(self.initial_position["exit"], self.button_size)]}
 
         # init menu buttons
         for name,button in self.buttons.items():
@@ -39,8 +27,8 @@ class Pause:
                 button[1].move(button[0].rect[0:2])
 
         self.button_music_size = [68,58]
-        self.button_music = {"on" : [sprite.Sprite("Resources/music_on.png"), Button([0,0],self.button_music_size)],
-                             "off" : [sprite.Sprite("Resources/music_off.png"), Button([0,0],self.button_music_size)]}
+        self.button_music = {"on" : [sprite.Sprite("Resources/music_on.png"), gui.Button([0,0],self.button_music_size)],
+                             "off" : [sprite.Sprite("Resources/music_off.png"), gui.Button([0,0],self.button_music_size)]}
 
 
         # init music button
@@ -78,7 +66,6 @@ class Pause:
             if(key.scancode == 58):
                 self.debug = not self.debug
 
-
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.actual_button_selected == "play"):
                 self.scene.is_paused = False
@@ -86,7 +73,7 @@ class Pause:
                 self.scene.restart()
                 self.scene.is_paused = False
             elif(self.actual_button_selected == "exit"):
-                self.scene.exit()
+                scene_manager.SceneManager().change_scene("Menu")
 
             if(self.button_music[self.actual_music_button_selected][1].is_colliding(key.pos)):
                 if(self.actual_music_button_selected == "on" and pygame.mixer.music.get_busy()):

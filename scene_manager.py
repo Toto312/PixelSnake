@@ -8,19 +8,23 @@ class SceneManager(metaclass=utils.SingletonMeta):
         self.curr_scene = None
 
     def resize(self, size):
-        for i in self.scenes:
+        for i in self.scenes.values():
             i.resize(size)
 
     def change_scene(self,name):
         if(not self.scenes.get(name)):
             return -1
+        self.curr_scene.is_active = False
         self.curr_scene = self.scenes.get(name)
+        self.curr_scene.is_active = True
 
     def add_scene(self, scene):
         if(len(self.scenes)>0):
             self.curr_scene.is_active = False
+            
         self.scenes.update({scene.name : scene})
         self.curr_scene = scene
+        self.curr_scene.is_active = True
 
     def update(self):
         self.curr_scene.update()

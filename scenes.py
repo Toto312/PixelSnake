@@ -1,6 +1,6 @@
 import pygame
 import sys
-import random
+import copy
 
 import scene
 import snake
@@ -11,6 +11,8 @@ import pause
 import game_over
 import time_game
 import font
+import menu
+import sprite
 
 class GameScene(scene.Scene):
     def __init__(self):
@@ -19,7 +21,6 @@ class GameScene(scene.Scene):
         self.screen = pygame.display.get_surface()
         self.last_size = pygame.display.get_window_size()
         self.event_handler = event_handler.EventHandler()
-        self.event_handler.create_event("End music")
 
         self.grid = grid.Grid([50,50],[700,700])
         self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
@@ -34,23 +35,18 @@ class GameScene(scene.Scene):
         
         self.score = 0
         self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
+        
         #threshold for the size of the score font
         self.score_threshold_x = self.score_font.surface.get_size()[0]
         self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [self.screen.get_size()[0],self.screen.get_size()[1]*0.3], 60)
         self.max_score_font.rotate(-45)
 
-        self.is_paused = True
+        self.is_paused = False
         self.does_died = False
 
         self.increment_sound = pygame.mixer.Sound("Resources/increment.mp3")
         self.die_sound = pygame.mixer.Sound("Resources/died.mp3")
         self.died_sound_played = False
-
-        self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
-        self.now_playing = random.choice(self.music)
-        pygame.mixer.music.load(self.now_playing)
-        pygame.mixer.music.play()
-        pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
 
     def check_events(self):
         if(button := self.event_handler.check_events("Key down")):
@@ -113,12 +109,6 @@ class GameScene(scene.Scene):
         self.does_died = True
 
     def update(self):
-        if(self.event_handler.check_events("End music")):
-            next = self.music.index(self.now_playing)-1
-            self.now_playing = self.music[next]
-            pygame.mixer.music.load(self.now_playing)
-            pygame.mixer.music.play()
-
         self.score_font.change_text(f"{self.score}")
         # the x value is the 9/10 of the screen minus the size of the number (if 2 digits it moves a bit to the left)
         self.score_font.change_position([self.screen.get_size()[0]*0.9-(self.score_font.surface.get_size()[0]-self.score_threshold_x),self.screen.get_size()[1]*0.1])
@@ -164,10 +154,62 @@ class MenuScene(scene.Scene):
         super().__init__("Menu")
 
         self.screen = pygame.display.get_surface()
+
         self.event_handler = event_handler.EventHandler()
+        self.menu = menu.MenuButtons(self)
+
+        self.logo_sprite = sprite.Sprite("Resources/Pixel Snake.png")
+
+        self.logo = copy.copy(self.logo_sprite)
+        self.logo.scale([self.logo.image.get_size()[0]*8.75,self.logo.image.get_size()[1]*8.75])
+        self.logo.change_position([self.screen.get_size()[0]*0.5-self.logo.image.get_size()[0]/2,
+                                   self.screen.get_size()[1]*0.025])
+
+        self.dirt_sprite = sprite.Sprite("Resources/dirt.png")
+
+        self.dirt_sprite.scale([128,128])
+
+        self.bg = pygame.sprite.Group()
+
+        for y in range(round(self.screen.get_size()[0]/128)+1):
+            for x in range(round(self.screen.get_size()[1]/128)+1):
+                new_sprite = sprite.Sprite("Resources/dirt.png")
+                new_sprite.scale([128,128])
+                new_sprite.change_position([x*128,y*128])
+                self.bg.add(new_sprite)
+
+    def resize(self,size):
+        num_mul = [max(size[0]/700*0.65,1),
+                   size[1]/700]
+        self.logo = copy.copy(self.logo_sprite)
+        self.logo.scale([self.logo.image.get_size()[0]*8.75*num_mul[0],self.logo.image.get_size()[1]*8.75*num_mul[1]])
+        self.logo.change_position([self.screen.get_size()[0]*0.5-self.logo.image.get_size()[0]/2,
+                                   self.screen.get_size()[1]*0.025])
+
+        self.menu.resize(size)
+
+        self.bg.empty()
+        
+        for x in range(round(self.screen.get_size()[0]/128)+1):
+            for y in range(round(self.screen.get_size()[1]/128)+1):
+                new_sprite = sprite.Sprite("Resources/dirt.png")
+                new_sprite.scale([128,128])
+                new_sprite.change_position([x*128,y*128])
+                self.bg.add(new_sprite)
+
 
     def update(self):
-        pass
+        self.menu.update()
 
     def draw(self):
-        pass
+        self.screen.fill((62,129,173))
+
+        self.bg.draw(self.screen)
+
+        self.screen.blit(self.logo.image,self.logo.rect[0:2])
+
+        self.menu.draw()
+
+    def exit(self):
+        pygame.quit()
+        sys.exit()
