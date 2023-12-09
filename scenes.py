@@ -180,7 +180,7 @@ class MenuScene(scene.Scene):
 
         self.dirt_sprite = "Resources/dirt.jpg"
 
-        self.bg = pygame.sprite.Group()
+        self.bg = None
         self.resize_bg()
 
         self.last_call = pygame.time.get_ticks()
@@ -223,14 +223,12 @@ class MenuScene(scene.Scene):
         self.snake = None
 
     def resize_bg(self):
-        self.bg.empty()
-        
+        self.bg = pygame.Surface(self.screen.get_size())
         for x in range(round(self.screen.get_size()[0]/128)+1):
             for y in range(round(self.screen.get_size()[1]/128)+1):
                 new_sprite = sprite.Sprite(self.dirt_sprite)
                 new_sprite.scale([128,128])
-                new_sprite.change_position([x*128,y*128])
-                self.bg.add(new_sprite)
+                self.bg.blit(new_sprite.image,[x*128,y*128])
 
     def resize(self,size):
         num_mul = [max(size[0]/700*0.65,1),
@@ -247,7 +245,7 @@ class MenuScene(scene.Scene):
     def draw(self):
         self.screen.fill((62,129,173))
 
-        self.bg.draw(self.screen)
+        self.screen.blit(self.bg,(0,0))
         if(self.snake != None):
             self.snake.draw(self.screen)
         self.screen.blit(self.logo.image,self.logo.rect[0:2])
