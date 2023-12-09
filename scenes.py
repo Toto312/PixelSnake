@@ -13,6 +13,7 @@ import time_game
 import font
 import menu
 import sprite
+import random
 
 class GameScene(scene.Scene):
     def __init__(self):
@@ -25,7 +26,7 @@ class GameScene(scene.Scene):
         self.grid = grid.Grid([50,50],[700,700])
         self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
 
-        self.snake = snake.Snake(self)
+        self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple = apple.Apple(self)
         self.apple.relocate_position(self.snake.snake_body.sprites())
 
@@ -90,7 +91,7 @@ class GameScene(scene.Scene):
         self.score = 0
         self.does_died = False
         self.press_enter.is_active = False
-        self.snake = snake.Snake(self)
+        self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple.relocate_position(self.snake.snake_body.sprites())
 
     def check_collision(self):
@@ -170,9 +171,52 @@ class MenuScene(scene.Scene):
         self.dirt_sprite.scale([128,128])
 
         self.bg = pygame.sprite.Group()
+        self.resize_bg()
 
-        for y in range(round(self.screen.get_size()[0]/128)+1):
-            for x in range(round(self.screen.get_size()[1]/128)+1):
+        self.last_call = pygame.time.get_ticks()
+        self.limit = random.choice([3,4,5])
+
+        self.grid = grid.Grid([50,50],self.screen.get_size())
+        snake_pos = random.randint(0,self.grid.max[1])
+
+        self.snake = snake.Snake(self.grid,
+                                 pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
+                                 [self.screen.get_size()[0],snake_pos*50])
+
+        self.snake.increment_body()
+        self.snake.increment_body()
+        self.snake.increment_body()
+        self.snake.increment_body()
+
+    def update(self):
+        if(pygame.time.get_ticks()-self.last_call>self.limit*1000 and self.snake == None):
+            self.limit = random.choice([1,2,3,4])
+
+            snake_pos = random.randint(0,self.grid.max[1])
+            self.snake = snake.Snake(self.grid,
+                                     pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
+                                     [self.screen.get_size()[0],snake_pos*50])
+            
+            self.snake.increment_body()
+            self.snake.increment_body()
+            self.snake.increment_body()
+            self.snake.increment_body()
+
+            self.last_call = pygame.time.get_ticks()
+
+        if(self.snake != None):
+            self.snake.update()
+
+        self.menu.update()
+
+    def it_died(self):
+        self.snake = None
+
+    def resize_bg(self):
+        self.bg.empty()
+        
+        for x in range(round(self.screen.get_size()[0]/128)+1):
+            for y in range(round(self.screen.get_size()[1]/128)+1):
                 new_sprite = sprite.Sprite("Resources/dirt.png")
                 new_sprite.scale([128,128])
                 new_sprite.change_position([x*128,y*128])
@@ -188,26 +232,15 @@ class MenuScene(scene.Scene):
 
         self.menu.resize(size)
 
-        self.bg.empty()
-        
-        for x in range(round(self.screen.get_size()[0]/128)+1):
-            for y in range(round(self.screen.get_size()[1]/128)+1):
-                new_sprite = sprite.Sprite("Resources/dirt.png")
-                new_sprite.scale([128,128])
-                new_sprite.change_position([x*128,y*128])
-                self.bg.add(new_sprite)
-
-
-    def update(self):
-        self.menu.update()
+        self.resize_bg()
 
     def draw(self):
         self.screen.fill((62,129,173))
 
         self.bg.draw(self.screen)
-
+        if(self.snake != None):
+            self.snake.draw(self.screen)
         self.screen.blit(self.logo.image,self.logo.rect[0:2])
-
         self.menu.draw()
 
     def exit(self):

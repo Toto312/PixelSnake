@@ -33,12 +33,14 @@ class Game:
         self.scene_manager.add_scene(self.menu_scene)
 
         # Music
-        #self.event_handler.create_event("End music")
-        #self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
-        #self.now_playing = random.choice(self.music)
-        #pygame.mixer.music.load(self.now_playing)
-        #pygame.mixer.music.play()
-        #pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
+        self.event_handler.create_event("End music")
+        self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
+        self.now_playing = random.choice(self.music)
+        pygame.mixer.music.load(self.now_playing)
+        pygame.mixer.music.play()
+        pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
+
+        pygame.mixer.music.set_volume(0)
 
     def mainloop(self):
         while True:
@@ -81,13 +83,13 @@ class Game:
     def music_manager(self):
         if(self.event_handler.check_events("End music")):
             self.change_music()
+            pygame.mixer.music.set_volume(0)
 
     def change_music(self):
-        pass
-        #next = self.music.index(self.now_playing)-1
-        #self.now_playing = self.music[next]
-        #pygame.mixer.music.load(self.now_playing)
-        #pygame.mixer.music.play()
+        next = self.music.index(self.now_playing)-1
+        self.now_playing = self.music[next]
+        pygame.mixer.music.load(self.now_playing)
+        pygame.mixer.music.play()
 
         
 if(__name__=="__main__"):

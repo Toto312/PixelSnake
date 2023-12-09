@@ -75,8 +75,11 @@ class MenuButtons:
             normal_size = [new_sprite[0].image.get_size()[0]*5,
                            new_sprite[0].image.get_size()[1]*5]
             
-            now_size_multiplier = [5*max(size[0]/700*0.65,1),
-                                   5*max(size[1]/700,1)]
+            if(size[1]==700):
+                now_size_multiplier = [5,5]
+            else:
+                now_size_multiplier = [5*max(size[0]/700*0.65,1),
+                                       5*max(size[1]/700*1.25,1)]
 
             new_sprite[0].scale([new_sprite[0].image.get_size()[0]*now_size_multiplier[0],
                                  new_sprite[0].image.get_size()[1]*now_size_multiplier[1]])
@@ -102,8 +105,11 @@ class MenuButtons:
             normal_size = [new_sprite[0].image.get_size()[0]*5,
                            new_sprite[0].image.get_size()[1]*5]
             
-            now_size_multiplier = [5*max(size[0]/700*0.65,1),
-                                   5*max(size[1]/700,1)]
+            if(size[1]==700):
+                now_size_multiplier = [5,5]
+            else:
+                now_size_multiplier = [5*max(size[0]/700*0.65,1),
+                                       5*max(size[1]/700*1.25,1)]
 
             new_sprite[0].scale([new_sprite[0].image.get_size()[0]*now_size_multiplier[0],
                                  new_sprite[0].image.get_size()[1]*now_size_multiplier[1]])
@@ -129,8 +135,11 @@ class MenuButtons:
             normal_size = [new_sprite[0].image.get_size()[0]*5,
                            new_sprite[0].image.get_size()[1]*5]
             
-            now_size_multiplier = [5*max(size[0]/700*0.65,1),
-                                   5*max(size[1]/700,1)]
+            if(size[1]==700):
+                now_size_multiplier = [5,5]
+            else:
+                now_size_multiplier = [5*max(size[0]/700*0.65,1),
+                                       5*max(size[1]/700*1.25,1)]
 
             new_sprite[0].scale([new_sprite[0].image.get_size()[0]*now_size_multiplier[0],
                                  new_sprite[0].image.get_size()[1]*now_size_multiplier[1]])

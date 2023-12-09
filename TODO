@@ -4,3 +4,7 @@ add menu
 add options menu (resolution, max fps, music and sfx volume)
 add other gamemodes
 add max score
+
+
+
+cambiar al snake que cuando muera no llame un it_died de la escena actual, sino que tiene una variable que diga que murio. Esta cuando se activa la escena actual lo detecta y hace algo con eso.
