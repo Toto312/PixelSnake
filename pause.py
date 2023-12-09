@@ -71,7 +71,8 @@ class Pause:
                 self.scene.is_paused = False
             elif(self.actual_button_selected == "restart"):
                 self.scene.restart()
-                self.scene.is_paused = False
+                self.scene.is_menu_opened = False
+                self.scene.is_paused = True
             elif(self.actual_button_selected == "exit"):
                 self.scene.restart()
                 self.scene.is_menu_opened = False
