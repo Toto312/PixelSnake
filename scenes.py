@@ -47,7 +47,9 @@ class GameScene(scene.Scene):
         self.does_died = False
 
         self.increment_sound = pygame.mixer.Sound("Resources/increment.mp3")
+        self.increment_sound.set_volume(0.4)
         self.die_sound = pygame.mixer.Sound("Resources/died.mp3")
+        self.increment_sound.set_volume(0.4)
         self.died_sound_played = False
 
     def check_events(self):
