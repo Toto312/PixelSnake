@@ -68,6 +68,7 @@ class Pause:
 
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.actual_button_selected == "play"):
+                self.scene.is_menu_opened = False
                 self.scene.is_paused = False
             elif(self.actual_button_selected == "restart"):
                 self.scene.restart()
