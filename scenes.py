@@ -178,9 +178,7 @@ class MenuScene(scene.Scene):
         self.logo.change_position([self.screen.get_size()[0]*0.5-self.logo.image.get_size()[0]/2,
                                    self.screen.get_size()[1]*0.025])
 
-        self.dirt_sprite = sprite.Sprite("Resources/dirt.png")
-
-        self.dirt_sprite.scale([128,128])
+        self.dirt_sprite = "Resources/dirt.jpg"
 
         self.bg = pygame.sprite.Group()
         self.resize_bg()
@@ -229,7 +227,7 @@ class MenuScene(scene.Scene):
         
         for x in range(round(self.screen.get_size()[0]/128)+1):
             for y in range(round(self.screen.get_size()[1]/128)+1):
-                new_sprite = sprite.Sprite("Resources/dirt.png")
+                new_sprite = sprite.Sprite(self.dirt_sprite)
                 new_sprite.scale([128,128])
                 new_sprite.change_position([x*128,y*128])
                 self.bg.add(new_sprite)

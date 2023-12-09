@@ -40,7 +40,7 @@ class Game:
         pygame.mixer.music.play()
         pygame.mixer.music.set_endevent(self.event_handler.event_types["End music"])
 
-        pygame.mixer.music.set_volume(0)
+        #pygame.mixer.music.set_volume(0)
 
     def mainloop(self):
         while True:
