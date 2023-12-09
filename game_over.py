@@ -37,7 +37,8 @@ class PressEnter:
         
         self.sprite = gameobject.GameObject("Resources/press_enter.png")
         self.sprite.scale([500,500])
-        self.sprite.move([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0]*0.5,pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
+        self.sprite.move([pygame.display.get_surface().get_size()[0]*0.5-self.sprite.image.get_size()[0]/2-self.sprite.rect[0]*0.5,
+                          pygame.display.get_surface().get_size()[1]*0.5-self.sprite.image.get_size()[1]/2-self.sprite.rect[1]])
         self.sprite.image.set_alpha(0)
 
         self.is_active = False

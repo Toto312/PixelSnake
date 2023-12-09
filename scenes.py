@@ -33,7 +33,7 @@ class GameScene(scene.Scene):
         self.pause = pause.Pause(self)
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
-        
+
         self.score = 0
         self.score_font = font.Font("Resources/PixeloidSans.ttf", f"{self.score}", [self.screen.get_size()[0]*0.9,self.screen.get_size()[1]*0.1], 50)
         
@@ -42,7 +42,8 @@ class GameScene(scene.Scene):
         self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [self.screen.get_size()[0],self.screen.get_size()[1]*0.3], 60)
         self.max_score_font.rotate(-45)
 
-        self.is_paused = False
+        self.is_paused = True
+        self.is_menu_opened = False
         self.does_died = False
 
         self.increment_sound = pygame.mixer.Sound("Resources/increment.mp3")
@@ -53,8 +54,12 @@ class GameScene(scene.Scene):
         if(button := self.event_handler.check_events("Key down")):
             # ESC
             if(button.key == 27):
-                self.is_paused = not self.is_paused
+                self.is_menu_opened = not self.is_menu_opened
+                self.is_paused = self.is_menu_opened
 
+            elif(button.key == 13):
+                if(self.is_paused):
+                    self.is_paused = not self.is_paused
 
     def check_events_movement(self):
         if(button := self.event_handler.check_events("Key down")):
@@ -118,15 +123,19 @@ class GameScene(scene.Scene):
             self.game_over.update(time_game.Time().dt)
             self.press_enter.is_active = True
 
+        if(self.is_paused):
+            self.press_enter.is_active = True
+
         self.check_events()
 
         if(not self.is_paused):
             self.check_events_movement()
             self.snake.update()
             self.check_collision()
-            self.press_enter.update(time_game.Time().dt)
         else: 
             self.pause.update()
+        
+        self.press_enter.update(time_game.Time().dt)
 
     def exit(self):
         pygame.quit()
@@ -144,8 +153,11 @@ class GameScene(scene.Scene):
                 self.max_score_font.draw(self.screen)
             self.game_over.draw(self.screen)
             self.press_enter.draw(self.screen)
-    
+
         if(self.is_paused):
+            self.press_enter.draw(self.screen)
+
+        if(self.is_menu_opened):
             self.pause.draw(self.screen)
 
         self.score_font.draw(self.screen)

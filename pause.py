@@ -74,7 +74,8 @@ class Pause:
                 self.scene.is_paused = False
             elif(self.actual_button_selected == "exit"):
                 self.scene.restart()
-                self.scene.is_paused = False
+                self.scene.is_menu_opened = False
+                self.scene.is_paused = True
                 scene_manager.SceneManager().change_scene("Menu")
 
             if(self.button_music[self.actual_music_button_selected][1].is_colliding(key.pos)):
