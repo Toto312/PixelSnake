@@ -1,3 +1,5 @@
+import pygame
+
 class LastDirections:
     def __init__(self):
         self.directions = []
@@ -5,7 +7,8 @@ class LastDirections:
     def add(self,direction):
         if(len(self.directions)<3):
             self.directions.append(direction)
-
+            return
+        
         for i in range(len(self.directions)):
             if(i==0):
                 continue
@@ -24,6 +27,8 @@ class LastDirections:
             if(i == len(self.directions)-1):
                 del self.directions[i]
 
+    def __str__(self):
+        return str(self.directions)
 
 class Direction:
     def __init__(self, direction, time=pygame.time.get_ticks()):
@@ -33,10 +38,9 @@ class Direction:
     def diff_time(self, time) -> int:
         return abs(self.time-time)
 
-        
 a = LastDirections()
 a.add([1,2])
 a.add([1,3])
 a.add([1,4])
 a.add([1,5])
-print(a.directions)
+print(a.last())
