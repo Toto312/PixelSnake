@@ -11,6 +11,9 @@ class Queue:
         self.values = []
         self.max = max
 
+    def len(self):
+        return len(self.values)
+
     def add(self,direction):
         if(len(self.values)<self.max):
             self.values.append(direction)

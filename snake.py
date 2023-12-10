@@ -28,8 +28,9 @@ class Snake:
         self.head = self.snake_body.sprites()[0]
     
         # first value is time in milliseconds, the second value is the coord
-        self.direction = direction.Direction([-1,0])
+        self.direction = direction.Direction([-1,0],pygame.time.get_ticks())
         self.last_direction = utils.Queue(2)
+        self.last_direction.add(direction.Direction([-1,0],1000))
 
         self.sprite_to_add = []
         self.collided_itself = False
@@ -46,8 +47,9 @@ class Snake:
         self.snake_body.add(self.head)
 
         # first value is time in milliseconds, the second value is the coord
-        self.direction = direction.Direction([-1,0])
+        self.direction = direction.Direction([-1,0],pygame.time.get_ticks())
         self.last_direction = utils.Queue(2)
+        self.last_direction.add(direction.Direction([-1,0],pygame.time.get_ticks()))
 
     def increment_body(self,times=1):
         sprites = gameobject.GameObject(self.surface)
@@ -65,7 +67,9 @@ class Snake:
 
     def change_direction(self, dir):
         self.last_direction.add(self.direction)
-        self.direction = direction.Direction(dir,pygame.time.get_ticks())
+        if(not (dir[0] == -self.direction.direction[0] and dir[1] == -self.direction.direction[1]) and
+           pygame.time.get_ticks()-self.last_direction.last().time>150):
+            self.direction = direction.Direction(dir,pygame.time.get_ticks())
 
     def is_colliding(self, rect):
         if(self.real_pos[0]+10>rect.width or (self.real_pos[0]-10<0 and not self.limit.collidepoint(self.real_pos)) or
@@ -91,20 +95,8 @@ class Snake:
         last_directions = self.last_direction.values
 
         #adding an offset time when changing direction
-        if(len(self.last_direction.values)>=1 and
-           self.direction.direction[0] == -self.last_direction.last().direction[0] and
+        if(self.direction.direction[0] == -self.last_direction.last().direction[0] and
            self.direction.direction[1] == -self.last_direction.last().direction[1]):
-            self.direction = self.last_direction.last()
-
-        real_pos = [self.real_pos[0]+round(self.speed*self.direction.direction[0]*time_game.Time().dt),
-                    self.real_pos[1]+round(self.speed*self.direction.direction[1]*time_game.Time().dt)]
-        
-        if(len(self.last_direction.values)==2 and
-           self.direction.direction[0] == -self.last_direction.values[0].direction[0] and
-           self.direction.direction[1] == -self.last_direction.values[0].direction[1] and
-           self.position_collide_with_group(real_pos,self.head) and 
-           self.direction.diff_time(self.last_direction.values[0])<100):
-            
             self.direction = self.last_direction.last()
 
         if(not self.is_colliding(self.limit) and not self.collided_itself):
