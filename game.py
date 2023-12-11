@@ -34,7 +34,7 @@ class Game:
 
         # Music
         self.event_handler.create_event("End music")
-        self.music = ["Resources/music1.mp3", "Resources/music2.mp3", "Resources/music3.mp3"]
+        self.music = ["Resources/music/music1.mp3", "Resources/music/music2.mp3", "Resources/music/music3.mp3"]
         self.now_playing = random.choice(self.music)
         pygame.mixer.music.load(self.now_playing)
         pygame.mixer.music.play()

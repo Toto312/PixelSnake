@@ -13,10 +13,10 @@ class Pause:
         self.button_size = [450,130]
 
         # kinda a strange way to make buttons, but i made the pause a single image so ¯\_(ツ)_/¯
-        self.buttons = {"default" : [sprite.Sprite("Resources/pause.png"), None],
-                       "play" : [sprite.Sprite("Resources/pause1.png"), gui.Button(self.initial_position["play"], self.button_size)],
-                       "restart" : [sprite.Sprite("Resources/pause2.png"), gui.Button(self.initial_position["restart"], self.button_size)],
-                       "exit" : [sprite.Sprite("Resources/pause3.png"), gui.Button(self.initial_position["exit"], self.button_size)]}
+        self.buttons = {"default" : [sprite.Sprite("Resources/gui/pause.png"), None],
+                       "play" : [sprite.Sprite("Resources/gui/pause1.png"), gui.Button(self.initial_position["play"], self.button_size)],
+                       "restart" : [sprite.Sprite("Resources/gui/pause2.png"), gui.Button(self.initial_position["restart"], self.button_size)],
+                       "exit" : [sprite.Sprite("Resources/gui/pause3.png"), gui.Button(self.initial_position["exit"], self.button_size)]}
 
         # init menu buttons
         for name,button in self.buttons.items():
@@ -27,8 +27,8 @@ class Pause:
                 button[1].move(button[0].rect[0:2])
 
         self.button_music_size = [68,58]
-        self.button_music = {"on" : [sprite.Sprite("Resources/music_on.png"), gui.Button([0,0],self.button_music_size)],
-                             "off" : [sprite.Sprite("Resources/music_off.png"), gui.Button([0,0],self.button_music_size)]}
+        self.button_music = {"on" : [sprite.Sprite("Resources/gui/music_on.png"), gui.Button([0,0],self.button_music_size)],
+                             "off" : [sprite.Sprite("Resources/gui/music_off.png"), gui.Button([0,0],self.button_music_size)]}
 
 
         # init music button

@@ -5,18 +5,22 @@ import gui
 import sprite
 import event_handler
 import scene_manager
+import window
 
 class MenuButtons:
     def __init__(self, scene):
         self.scene = scene
         self.screen = pygame.display.get_surface()
 
-        self.play_sprite = sprite.Sprite("Resources/play_button.png")
-        self.play_sprite1 = sprite.Sprite("Resources/play_button1.png")
-        self.options_sprite = sprite.Sprite("Resources/options_button.png")
-        self.options_sprite1 = sprite.Sprite("Resources/options_button1.png")
-        self.exit_sprite = sprite.Sprite("Resources/exit_button.png")
-        self.exit_sprite1 = sprite.Sprite("Resources/exit_button1.png")
+        self.play_sprite = sprite.Sprite("Resources/gui/play_button.png")
+        self.play_sprite1 = sprite.Sprite("Resources/gui/play_button1.png")
+        self.options_sprite = sprite.Sprite("Resources/gui/options_button.png")
+        self.options_sprite1 = sprite.Sprite("Resources/gui/options_button1.png")
+        self.exit_sprite = sprite.Sprite("Resources/gui/exit_button.png")
+        self.exit_sprite1 = sprite.Sprite("Resources/gui/exit_button1.png")
+
+        self.window = window.OptionsGUI()
+        self.window.is_active = False
 
         #-----------------------------------PLAY BUTTON------------------------------------------
         self.play_button = {"off" : [copy.copy(self.play_sprite),gui.Button([0,0],[60,13])],
@@ -69,6 +73,7 @@ class MenuButtons:
         self.debug = False
 
     def resize(self, size):
+        self.window.resize(size)
         for button in self.play_button.values():
             new_sprite = [copy.copy(self.play_sprite),copy.copy(self.play_sprite1)]
             # this size is when the game is in 700,700
@@ -160,6 +165,7 @@ class MenuButtons:
             self.exit_button["on"][1].rect[1] = self.exit_button["off"][0].rect[1] + 10*now_size_multiplier[1]
             
     def update(self):
+        self.window.update()
         if(key := event_handler.EventHandler().check_events("Key down")):
             # F1
             if(key.scancode == 58):
@@ -169,7 +175,9 @@ class MenuButtons:
             if(self.selected_play_sprite == "on"):
                 scene_manager.SceneManager().change_scene("Game")
             elif(self.selected_options_sprite == "on"):
-                print("options")
+                self.window.is_active = True
+                #pygame.display.set_mode(max(pygame.display.get_desktop_sizes()),pygame.FULLSCREEN)
+                #scene_manager.SceneManager().curr_scene.resize(max(pygame.display.get_desktop_sizes()))
             elif(self.selected_exit_sprite == "on"):
                 self.scene.exit()
 
@@ -199,6 +207,8 @@ class MenuButtons:
         self.screen.blit(self.exit_button[self.selected_exit_sprite][0].image,
                          self.exit_button[self.selected_exit_sprite][0].rect[0:2])
         
+        self.window.draw(self.screen)
+
         if(self.debug):
             pygame.draw.rect(self.screen,(255,0,0),self.play_button[self.selected_play_sprite][1].rect)
             pygame.draw.rect(self.screen,(255,0,0),self.options_button[self.selected_options_sprite][1].rect)
