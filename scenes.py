@@ -24,7 +24,7 @@ class GameScene(scene.Scene):
         self.event_handler = event_handler.EventHandler()
 
         self.grid = grid.Grid([50,50],[700,700])
-        self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
+        self.limit = pygame.Rect(-2,-2,self.screen.get_width()+4,self.screen.get_height()+4)
 
         self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple = apple.Apple(self)
@@ -60,7 +60,7 @@ class GameScene(scene.Scene):
                 self.is_paused = self.is_menu_opened
 
             elif(button.key == 13):
-                if(self.is_paused):
+                if(self.is_paused and not self.is_menu_opened):
                     self.is_paused = not self.is_paused
 
     def check_events_movement(self):
@@ -148,7 +148,7 @@ class GameScene(scene.Scene):
 
         self.snake.draw(self.screen,self.limit)
         #the +2 its because the snake touches the topleft since its size is 46 instead of 50 (for aesthetic purposes)
-        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+2,self.apple.rect[1]+self.limit.y+2))
+        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+4,self.apple.rect[1]+self.limit.y+4))
 
         if(self.does_died):
             if(self.score == 169):
@@ -193,7 +193,7 @@ class MenuScene(scene.Scene):
 
         self.snake = snake.Snake(self.grid,
                                  pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
-                                 [self.screen.get_size()[0],snake_pos*50])
+                                 [self.screen.get_size()[0],snake_pos*50], False)
 
         self.snake.increment_body()
         self.snake.increment_body()
@@ -207,7 +207,7 @@ class MenuScene(scene.Scene):
             snake_pos = random.randint(0,self.grid.max[1])
             self.snake = snake.Snake(self.grid,
                                      pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
-                                     [self.screen.get_size()[0],snake_pos*50])
+                                     [self.screen.get_size()[0],snake_pos*50], False)
             
             self.snake.increment_body()
             self.snake.increment_body()

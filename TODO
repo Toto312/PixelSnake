@@ -1,10 +1,10 @@
 Make the control changeable (isntead of checking the key pressed, make a button that is assigned to a certain action)
 add sound and music ✓
-add menu
+add menu ✓
 add options menu (resolution, max fps, music and sfx volume)
-add other gamemodes
-add max score
+add other gamemodes 
+add max score ✓
 
 
-
+hacer que, cuando ocurra un error, muestre un mensaje abajo rojo
 cambiar al snake que cuando muera no llame un it_died de la escena actual, sino que tiene una variable que diga que murio. Esta cuando se activa la escena actual lo detecta y hace algo con eso.

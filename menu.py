@@ -166,33 +166,30 @@ class MenuButtons:
             
     def update(self):
         self.window.update()
-        if(key := event_handler.EventHandler().check_events("Key down")):
-            # F1
-            if(key.scancode == 58):
-                self.debug = not self.debug
+        if(not self.window.is_active):
+            if(key := event_handler.EventHandler().check_events("Key down")):
+                # F1
+                if(key.scancode == 58):
+                    self.debug = not self.debug
 
-        if(key := event_handler.EventHandler().check_events("Mouse button down")):
-            if(self.selected_play_sprite == "on"):
-                scene_manager.SceneManager().change_scene("Game")
-            elif(self.selected_options_sprite == "on"):
-                self.window.is_active = True
-                #pygame.display.set_mode(max(pygame.display.get_desktop_sizes()),pygame.FULLSCREEN)
-                #scene_manager.SceneManager().curr_scene.resize(max(pygame.display.get_desktop_sizes()))
-            elif(self.selected_exit_sprite == "on"):
-                self.scene.exit()
+            if(key := event_handler.EventHandler().check_events("Mouse button down")):
+                if(self.selected_play_sprite == "on"):
+                    scene_manager.SceneManager().change_scene("Game")
+                elif(self.selected_options_sprite == "on"):
+                    self.window.is_active = True
+                elif(self.selected_exit_sprite == "on"):
+                    self.scene.exit()
 
         if(key := event_handler.EventHandler().check_events("Mouse motion")):
-            if(self.play_button["off"][1].is_colliding(key.pos)):
+            if(self.play_button["off"][1].is_colliding(key.pos) and not self.window.is_active):
                 self.selected_play_sprite = "on"
             else:
                 self.selected_play_sprite = "off"
-
-            if(self.options_button["off"][1].is_colliding(key.pos)):
+            if(self.options_button["off"][1].is_colliding(key.pos) and not self.window.is_active):
                 self.selected_options_sprite = "on"
             else:
                 self.selected_options_sprite = "off"
-
-            if(self.exit_button["off"][1].is_colliding(key.pos)):
+            if(self.exit_button["off"][1].is_colliding(key.pos) and not self.window.is_active):
                 self.selected_exit_sprite = "on"
             else:
                 self.selected_exit_sprite = "off"

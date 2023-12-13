@@ -1,4 +1,9 @@
 import pygame
+
+def get_text_font_size(font_name, text, size) -> list[int,int]:
+    font = Font(font_name,text,[0,0],size)
+    return font.surface.get_size()
+
 class Font:
     def __init__(self, font_name: str, text: str, pos: list[int,int], size: int, is_centered = False):
         self.size = size
