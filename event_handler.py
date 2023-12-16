@@ -29,8 +29,8 @@ class EventHandler(metaclass=utils.SingletonMeta):
 					  "Mouse button down": pygame.MOUSEBUTTONDOWN, "Mouse button up": pygame.MOUSEBUTTONUP,
 					  "Video resize" : pygame.VIDEORESIZE}
 		
-		self.buttons = [Button("up",[pygame.K_UP, pygame.K_w]),Button("down",[pygame.K_DOWN, pygame.K_s]),
-				  		Button("left",[pygame.K_LEFT, pygame.K_a]),Button("right",[pygame.K_RIGHT, pygame.K_d])]
+		self.buttons = [Button("up",[pygame.K_UP]),Button("down",[pygame.K_DOWN]),
+				  		Button("left",[pygame.K_LEFT]),Button("right",[pygame.K_RIGHT])]
 
 		self.is_control_key_pressed = False
 		self.is_alt_key_pressed = False

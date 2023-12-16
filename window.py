@@ -289,22 +289,25 @@ class Entry(Widget):
                         self.entry_is_active = False
                         self.mode = 1
                         self.text = button.unicode
-                    elif(pygame.key.name(button.key) in ["up","down","left","right"]):
+                    elif(pygame.key.name(button.key) in ["up","down","left","right","escape","f1","f2","f3","f4","f5","f6","f7","f8","f9","f10","f11","f12"]):
                         self.entry_is_active = False
                         self.mode = 1
-                        self.text = pygame.key.name(button.key)
+                        if(pygame.key.name(button.key)=="escape"):
+                            self.text = "escape"
+                        else:
+                            self.text = pygame.key.name(button.key)
                     elif(button.unicode in "abcdefghijklmnopqrstuvwxyz"):
                         self.entry_is_active = False
                         self.mode = 1
                         self.text = button.unicode
+                if(pygame.key.key_code(self.text)==27):
+                    self.text = "escape"
                 self.font.change_text(self.text)
 
     def get_key(self):
         if(event_handler.EventHandler().check_keys_pressed(pygame.K_BACKSPACE) and 
            pygame.time.get_ticks()-self.time_last_backspace>500 and self.entry_is_active):
-            
             self.text = self.text[:-1]
-
         self.font.change_text(self.text)
 
     def draw(self, window):
@@ -462,24 +465,23 @@ class OptionsGUI(Window):
         for i in full_screen_sprite:
             i.scale([i.image.get_size()[0]*3,i.image.get_size()[1]*3])
 
-        self.right_button = Button(full_screen_sprite,
-                                   [self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.52],
-                                command= lambda button=self: self.change_button(button))
-        self.right_button.is_active = False
-
-        self.right_button2 = Button(full_screen_sprite,
-                                [self.position[0]+self.size[0]*0.45,self.position[0]+self.size[0]*0.52],
-                                command= lambda button=self: self.change_button(button))
-        self.right_button2.is_active = False
-
-        self.entry_up_button = Entry("up_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.22],[(self.position[0]+self.size[0]*0.3)*1.125,(self.position[0]+self.size[0]*0.22)*1.15],5,"up")
+        self.entry_up_button = Entry("up_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.22],[(self.position[0]+self.size[0]*0.3)*1.125,(self.position[0]+self.size[0]*0.22)*1.15],6,"up")
         self.entry_up_button.is_active = False
 
-        self.entry_down_button = Entry("down_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.32],[(self.entry_up_button.position[0])*1.12*1.125,(self.entry_up_button.position[1])*1.2*1.15],5,"down")
+        self.entry_down_button = Entry("down_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.32],[(self.entry_up_button.position[0])*1.11*1.125,(self.entry_up_button.position[1])*1.2*1.15],6,"down")
         self.entry_down_button.is_active = False
 
-        self.entry_left_button = Entry("left_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.42],[(self.entry_up_button.position[0])*2.12*1.125,(self.entry_up_button.position[1])*2.2*1.15],5,"left")
+        self.entry_right_button = Entry("left_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.42],[(self.entry_up_button.position[0])*1.03*1.125,(self.entry_up_button.position[1])*1.4*1.15],6,"left")
+        self.entry_right_button.is_active = False
+
+        self.entry_left_button = Entry("right_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.52],[(self.entry_up_button.position[0])*1.09*1.125,(self.entry_up_button.position[1])*1.6*1.15],6,"right")
         self.entry_left_button.is_active = False
+        
+        self.entry_menu_button = Entry("menu",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.62],[(self.entry_up_button.position[0])*1.19*1.125,(self.entry_up_button.position[1])*1.8*1.15],6,"escape")
+        self.entry_menu_button.is_active = False
+
+        self.entry_debug_button = Entry("debug",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.72],[(self.entry_up_button.position[0])*0.985*1.125,(self.entry_up_button.position[1])*2.01*1.15],6,"f1")
+        self.entry_debug_button.is_active = False
 
         self.add_widget(self.up_label)
         self.add_widget(self.down_label)
@@ -487,10 +489,12 @@ class OptionsGUI(Window):
         self.add_widget(self.right_label)
         self.add_widget(self.menu_label)
         self.add_widget(self.debug_label)
-        self.add_widget(self.right_button)
-        self.add_widget(self.right_button2)
         self.add_widget(self.entry_up_button)
         self.add_widget(self.entry_down_button)
+        self.add_widget(self.entry_left_button)
+        self.add_widget(self.entry_right_button)
+        self.add_widget(self.entry_menu_button)
+        self.add_widget(self.entry_debug_button)
 
     def change_button(self):
         list_buttons = {}
@@ -505,6 +509,22 @@ class OptionsGUI(Window):
                 elif(i.id == "down_button" and i.text not in list_buttons["down"]):
                     new_button = event_handler.Button("down",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("down")
+                    event_handler.EventHandler().add_button(new_button)
+                elif(i.id == "left_button" and i.text not in list_buttons["left"]):
+                    new_button = event_handler.Button("left",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("left")
+                    event_handler.EventHandler().add_button(new_button)
+                elif(i.id == "right_button" and i.text not in list_buttons["right"]):
+                    new_button = event_handler.Button("right",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("right")
+                    event_handler.EventHandler().add_button(new_button)
+                elif(i.id == "menu" and i.text not in list_buttons["Menu"]):
+                    new_button = event_handler.Button("menu",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("menu")
+                    event_handler.EventHandler().add_button(new_button)
+                elif(i.id == "debug" and i.text not in list_buttons["Debug"]):
+                    new_button = event_handler.Button("Debug",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("Debug")
                     event_handler.EventHandler().add_button(new_button)
 
 
@@ -557,8 +577,9 @@ class OptionsGUI(Window):
             
             elif(button.button == 1 and self.buttons_button.collidepoint(button.pos)):
                 self.activate_widgets(self.up_label,self.down_label,self.left_label,self.right_label,
-                                      self.menu_label, self.debug_label,self.right_button,self.right_button2,self.entry_up_button,
-                                      self.entry_down_button,self.entry_left_button)
+                                      self.menu_label, self.debug_label,self.entry_up_button,
+                                      self.entry_down_button,self.entry_left_button,self.entry_right_button,
+                                      self.entry_menu_button,self.entry_debug_button)
                 self.window = self.image2.image
 
         for i in self.widgets:

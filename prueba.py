@@ -1,3 +1,5 @@
-a = "si"
-b = "sino"
-print(a in b)
+import pygame
+
+pygame.init()
+
+print(pygame.key.name(pygame.K_ESCAPE))
