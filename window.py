@@ -138,7 +138,7 @@ class Options(Widget):
         
         if(resolution != list(pygame.display.get_surface().get_size()) and not pygame.display.is_fullscreen()):
             pygame.display.set_mode(resolution,pygame.RESIZABLE)
-            scene_manager.SceneManager().curr_scene.resize(resolution)
+            scene_manager.SceneManager().resize(resolution)
             save.SaveFile().change_value("resolution",f"{resolution[0]}x{resolution[1]}")
 
     def update(self):
@@ -560,8 +560,8 @@ class OptionsGUI(Window):
                     event_handler.EventHandler().add_button(new_button)
                     save.SaveFile().change_value("right",pygame.key.key_code(i.text))
                 elif(i.id == "menu" and i.text not in list_buttons["Menu"]):
-                    new_button = event_handler.Button("menu",[pygame.key.key_code(i.text)])
-                    event_handler.EventHandler().del_button("menu")
+                    new_button = event_handler.Button("Menu",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("Menu")
                     event_handler.EventHandler().add_button(new_button)
                     save.SaveFile().change_value("Menu",pygame.key.key_code(i.text))
                 elif(i.id == "debug" and i.text not in list_buttons["Debug"]):
