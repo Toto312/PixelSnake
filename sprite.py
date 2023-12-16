@@ -6,6 +6,8 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self, img):
         super().__init__()
         
+        self.image_filename = img
+
         self.image = image.get_surface(img)
         self.rect = self.image.get_rect()
 

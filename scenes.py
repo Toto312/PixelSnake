@@ -14,6 +14,8 @@ import font
 import menu
 import sprite
 import random
+import volume
+import save
 
 class GameScene(scene.Scene):
     def __init__(self):
@@ -24,7 +26,7 @@ class GameScene(scene.Scene):
         self.event_handler = event_handler.EventHandler()
 
         self.grid = grid.Grid([50,50],[700,700])
-        self.limit = pygame.Rect(0,0,self.screen.get_width(),self.screen.get_height())
+        self.limit = pygame.Rect(-2,-2,self.screen.get_width()+4,self.screen.get_height()+4)
 
         self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple = apple.Apple(self)
@@ -39,45 +41,49 @@ class GameScene(scene.Scene):
         
         #threshold for the size of the score font
         self.score_threshold_x = self.score_font.surface.get_size()[0]
-        self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [self.screen.get_size()[0],self.screen.get_size()[1]*0.3], 60)
+        self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [0,0], 60)
         self.max_score_font.rotate(-45)
-
+        self.max_score_font.change_position([self.screen.get_size()[0]*0.55,self.screen.get_size()[1]*0.1])
         self.is_paused = True
         self.is_menu_opened = False
         self.does_died = False
 
-        self.increment_sound = pygame.mixer.Sound("Resources/increment.mp3")
-        self.increment_sound.set_volume(0.4)
-        self.die_sound = pygame.mixer.Sound("Resources/died.mp3")
-        self.increment_sound.set_volume(0.4)
+        self.increment_sound = pygame.mixer.Sound("Resources/music/increment.mp3")
+        self.increment_sound.set_volume(0.5)
+        self.die_sound = pygame.mixer.Sound("Resources/music/died.mp3")
+        self.increment_sound.set_volume(0.5)
         self.died_sound_played = False
+        self.already_checked_sound = False
 
+        if(max := save.SaveFile().read_value("max score")):
+            self.max_score = int(max)
+        else:
+            self.max_score = 0
+
+        self.is_max_score = False
     def check_events(self):
+        if(self.event_handler.is_button_pressed("Menu")):
+            self.is_menu_opened = not self.is_menu_opened
+            self.is_paused = self.is_menu_opened
         if(button := self.event_handler.check_events("Key down")):
-            # ESC
-            if(button.key == 27):
-                self.is_menu_opened = not self.is_menu_opened
-                self.is_paused = self.is_menu_opened
-
-            elif(button.key == 13):
-                if(self.is_paused):
+            if(button.key == 13):
+                if(self.is_paused and not self.is_menu_opened):
                     self.is_paused = not self.is_paused
 
     def check_events_movement(self):
-        if(button := self.event_handler.check_events("Key down")):
-            if(button.key == pygame.K_w or button.key == pygame.K_UP):
-                self.snake.change_direction([0,-1])
-            elif(button.key == pygame.K_s or button.key == pygame.K_DOWN):
-                self.snake.change_direction([0,1])
-            elif(button.key == pygame.K_a or button.key == pygame.K_LEFT):
-                self.snake.change_direction([-1,0])
-            elif(button.key == pygame.K_d or button.key == pygame.K_RIGHT):
-                self.snake.change_direction([1,0])
-            # enter
-            elif(button.key == 13):
-                if(self.does_died):
-                    self.restart()
-                    self.died_sound_played = False
+        if(button := self.event_handler.is_button_pressed("up")):
+            self.snake.change_direction([0,-1])
+        elif(button := self.event_handler.is_button_pressed("down")):
+            self.snake.change_direction([0,1])
+        elif(button := self.event_handler.is_button_pressed("left")):
+            self.snake.change_direction([-1,0])
+        elif(button := self.event_handler.is_button_pressed("right")):
+            self.snake.change_direction([1,0])
+        # enter
+        elif(button := self.event_handler.check_events("Key down")):
+            if(button.key == 13 and self.does_died):
+                self.restart()
+                self.died_sound_played = False
  
     def resize(self, size):
         last_limit_position = self.limit[:]
@@ -93,6 +99,8 @@ class GameScene(scene.Scene):
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
         self.pause.resize()
+        
+        self.max_score_font.move(self.limit[0:2])
 
     def restart(self):
         self.score = 0
@@ -100,6 +108,7 @@ class GameScene(scene.Scene):
         self.press_enter.is_active = False
         self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple.relocate_position(self.snake.snake_body.sprites())
+        self.is_max_score = False
 
     def check_collision(self):
         if(self.apple.rect.collidepoint(self.snake.head.rect[0:2])):
@@ -117,6 +126,11 @@ class GameScene(scene.Scene):
         self.does_died = True
 
     def update(self):
+        if(self.increment_sound.get_volume()*2 != volume.Volume().volume):
+            self.increment_sound.set_volume(volume.Volume().volume/2)
+        if(self.die_sound.get_volume()*2 != volume.Volume().volume):
+            self.die_sound.set_volume(volume.Volume().volume/2)
+
         self.score_font.change_text(f"{self.score}")
         # the x value is the 9/10 of the screen minus the size of the number (if 2 digits it moves a bit to the left)
         self.score_font.change_position([self.screen.get_size()[0]*0.9-(self.score_font.surface.get_size()[0]-self.score_threshold_x),self.screen.get_size()[1]*0.1])
@@ -148,13 +162,18 @@ class GameScene(scene.Scene):
 
         self.snake.draw(self.screen,self.limit)
         #the +2 its because the snake touches the topleft since its size is 46 instead of 50 (for aesthetic purposes)
-        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+2,self.apple.rect[1]+self.limit.y+2))
+        self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+4,self.apple.rect[1]+self.limit.y+4))
 
         if(self.does_died):
-            if(self.score == 169):
-                self.max_score_font.draw(self.screen)
+            if(self.max_score < self.score or self.score == 169):
+                self.max_score = self.score
+                save.SaveFile().change_value("max score",self.max_score)
+                self.is_max_score = True
             self.game_over.draw(self.screen)
             self.press_enter.draw(self.screen)
+
+        if(self.is_max_score):
+            self.max_score_font.draw(self.screen)
 
         if(self.is_paused):
             self.press_enter.draw(self.screen)
@@ -193,7 +212,7 @@ class MenuScene(scene.Scene):
 
         self.snake = snake.Snake(self.grid,
                                  pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
-                                 [self.screen.get_size()[0],snake_pos*50])
+                                 [self.screen.get_size()[0],snake_pos*50], False)
 
         self.snake.increment_body()
         self.snake.increment_body()
@@ -207,7 +226,7 @@ class MenuScene(scene.Scene):
             snake_pos = random.randint(0,self.grid.max[1])
             self.snake = snake.Snake(self.grid,
                                      pygame.Rect(-50*4,-50*4,self.screen.get_size()[0]+50,self.screen.get_size()[1]+50),
-                                     [self.screen.get_size()[0],snake_pos*50])
+                                     [self.screen.get_size()[0],snake_pos*50], False)
             
             self.snake.increment_body()
             self.snake.increment_body()

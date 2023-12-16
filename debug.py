@@ -1,21 +1,10 @@
 import font
 import time_game
+import utils
 
-class DebugInfo:
-    def __init__(self, screen):
+class DebugInfo(metaclass=utils.SingletonMeta):
+    def __init__(self):
         self.is_active = False
 
-        self.screen = screen
-        self.fps_font = font.Font("Resources/PixeloidSans.ttf",f"FPS: {round(time_game.Time().get_fps())}",[self.screen.get_size()[0]*0.8,self.screen.get_size()[1]*0.1],30)
-        self.fps_font.change_position([self.screen.get_size()[0]-self.fps_font.surface.get_rect()[2],self.screen.get_size()[1]-self.fps_font.surface.get_rect()[3]])
-    
-    def update(self):
-        if(not self.is_active):
-            return
-        self.fps_font.change_text(f"FPS: {round(time_game.Time().get_fps())}")
-        self.fps_font.change_position([self.screen.get_size()[0]-self.fps_font.surface.get_rect()[2],self.screen.get_size()[1]-self.fps_font.surface.get_rect()[3]])
-    
-    def draw(self):
-        if(not self.is_active):
-            return
-        self.fps_font.draw(self.screen)
+    def change_state(self, state) -> None:
+        self.is_active = state

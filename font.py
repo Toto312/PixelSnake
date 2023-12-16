@@ -1,12 +1,17 @@
 import pygame
+
+def get_text_font_size(font_name, text, size) -> list[int,int]:
+    font = Font(font_name,text,[0,0],size)
+    return font.surface.get_size()
+
 class Font:
-    def __init__(self, font_name: str, text: str, pos: list[int,int], size: int):
+    def __init__(self, font_name: str, text: str, pos: list[int,int], size: int, is_centered = False):
         self.size = size
         self.color = (255,255,255)
         self.text = text
 
         self.is_bold = False
-        self.is_centered = True
+        self.is_centered = is_centered
 
         self.font_name = font_name
         self.font = pygame.font.Font(self.font_name, self.size)
@@ -16,7 +21,7 @@ class Font:
         if(self.is_centered):
             self.rect = self.surface.get_rect(center=pos)
         else:
-            self.rect = self.surface.get_rect()
+            self.rect = self.surface.get_rect(center=[-self.surface.get_size()[0]/2,-self.surface.get_size()[1]/2])
             self.move(pos)
 
     def change_position(self,pos):
