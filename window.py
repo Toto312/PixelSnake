@@ -5,6 +5,8 @@ import font
 import sprite
 import event_handler
 import scene_manager
+import debug
+import math
 
 class Widget:
     def __init__(self, position = [0,0]):
@@ -23,6 +25,8 @@ class Widget:
 
 class Button(Widget):
     def __init__(self, sprites, position, font=None, command=None, image_front=None):
+        super().__init__(position)
+        
         self.font = font
         self.sprites = sprites
         if(isinstance(self.sprites,sprite.Sprite)):
@@ -43,11 +47,16 @@ class Button(Widget):
         if(button := event_handler.EventHandler().check_events("Mouse button down")):
             if((self.font and self.font.rect.collidepoint(button.pos)) or
                (not self.font and rect_button.collidepoint(button.pos))):
-                self.command()
+                if(self.command):
+                    self.command()
                 if(len(self.sprites)>1):
-                    self.mode = (self.mode+1) % len(self.sprites)
-            else:
-                self.mode = 0
+                    self.change_next_image()
+
+    def change_next_image(self):
+        self.mode = (self.mode+1) % len(self.sprites)
+
+    def change_image_index(self, i):
+        self.mode = i
 
     def draw(self, window):
         if(isinstance(self.sprites,list) and self.mode <= 2):
@@ -60,7 +69,6 @@ class Button(Widget):
 
         if(self.font):
             self.font.draw(window)
-
 
 class Label(Widget):
     def __init__(self, text, font_name, size, position):
@@ -82,7 +90,7 @@ class Options(Widget):
 
         self.options = options
         self.size = size
-        self.is_active = False
+        self.is_active = True
 
         self.image_selected = sprite.Sprite("Resources/gui/options_waterfall.png")
         self.image_selected.scale(size)
@@ -126,9 +134,8 @@ class Options(Widget):
         resolution_str = self.options[index]
         resolution = [int(resolution_str[0:resolution_str.index("x")]),int(resolution_str[resolution_str.index("x")+1:])]
         
-        if(resolution != list(pygame.display.get_surface().get_size())):
-            print(resolution,pygame.display.get_surface().get_size())
-            pygame.display.set_mode(resolution)
+        if(resolution != list(pygame.display.get_surface().get_size()) and not pygame.display.is_fullscreen()):
+            pygame.display.set_mode(resolution,pygame.RESIZABLE)
             scene_manager.SceneManager().curr_scene.resize(resolution)
 
     def update(self):
@@ -166,6 +173,145 @@ class Options(Widget):
             window.blit(self.image_selected.image,self.position)
 
 
+class Volume(Widget):
+    def __init__(self, position):
+        super().__init__()
+        
+        volume = sprite.Sprite("Resources/gui/volume.png")
+        volume.scale([volume.image.get_size()[0]*5,volume.image.get_size()[1]*5])
+        
+        volume1 = sprite.Sprite("Resources/gui/volume1.png")
+        volume1.scale([volume1.image.get_size()[0]*5,volume1.image.get_size()[1]*5])
+        
+        volume2 = sprite.Sprite("Resources/gui/volume2.png")
+        volume2.scale([volume2.image.get_size()[0]*5,volume2.image.get_size()[1]*5])
+        
+        volume3 = sprite.Sprite("Resources/gui/volume3.png")
+        volume3.scale([volume3.image.get_size()[0]*5,volume3.image.get_size()[1]*5])
+        
+        volume4 = sprite.Sprite("Resources/gui/volume4.png")
+        volume4.scale([volume4.image.get_size()[0]*5,volume4.image.get_size()[1]*5])
+        
+        self.level = pygame.Rect((9-14)*5,0,14*5,13*5)
+        self.level1 = pygame.Rect(9*5,0,14*5,13*5)
+        self.level2 = pygame.Rect(23*5,0,14*5,13*5)
+        self.level3 = pygame.Rect(37*5,0,14*5,13*5)
+        self.level4 = pygame.Rect(51*5,0,14*5,13*5)
+        
+        self.level.move_ip(position[0],position[1])
+        self.level1.move_ip(position[0],position[1])
+        self.level2.move_ip(position[0],position[1])
+        self.level3.move_ip(position[0],position[1])
+        self.level4.move_ip(position[0],position[1])
+
+        self.curr_image = 0
+        self.get_curr_image()
+        self.images = [volume,volume1,volume2,volume3,volume4]
+        self.position = position
+
+    def get_curr_image(self):
+        vol = pygame.mixer.music.get_volume()
+        dou = math.ceil(vol*4)
+        self.curr_image = dou
+
+    def update(self):
+        if(key := event_handler.EventHandler().check_events("Mouse button down")):
+            if(key.button == 1 and self.level.collidepoint(key.pos)):
+                pygame.mixer.music.set_volume(0)
+                self.curr_image = 0
+            elif(key.button == 1 and self.level1.collidepoint(key.pos)):
+                pygame.mixer.music.set_volume(0.25)
+                self.curr_image = 1
+            elif(key.button == 1 and self.level2.collidepoint(key.pos)):
+                pygame.mixer.music.set_volume(0.5)
+                self.curr_image = 2
+            elif(key.button == 1 and self.level3.collidepoint(key.pos)):
+                pygame.mixer.music.set_volume(0.75)
+                self.curr_image = 3
+            elif(key.button == 1 and self.level4.collidepoint(key.pos)):
+                pygame.mixer.music.set_volume(1)
+                self.curr_image = 4
+
+    def draw(self, window):
+        window.blit(self.images[self.curr_image].image,self.position)
+
+        if(debug.DebugInfo().is_active):
+            pygame.draw.rect(window,(0,0,0),self.level)
+            pygame.draw.rect(window,(255,0,0),self.level1)
+            pygame.draw.rect(window,(0,255,0),self.level2)
+            pygame.draw.rect(window,(0,0,255),self.level3)
+            pygame.draw.rect(window,(124,124,124),self.level4)
+
+
+class Entry(Widget):
+    def __init__(self, id, position, font_position, max_len=10, text=""):
+        super().__init__(position)
+        
+        self.id = id
+
+        self.images = [sprite.Sprite("Resources/gui/entry.png"),sprite.Sprite("Resources/gui/entry_pressed.png")]
+        for i in self.images:
+            i.scale([i.image.get_size()[0]*2,i.image.get_size()[1]*2.5])
+        self.mode = 1
+
+        self.rect_image = self.images[self.mode].image.get_rect()
+        self.rect_image.move_ip(self.position)
+
+        self.entry_is_active = False
+        self.initial_text = text
+        self.text = self.initial_text
+        self.time_last_backspace = 0 #[self.position[0]*1.125,self.position[1]*1.15]
+        self.font = font.Font("Resources/PixeloidSans.ttf",self.text,font_position,20)
+        self.max_len = max_len
+
+    def update(self): 
+        self.get_key()
+
+        if(mouse := event_handler.EventHandler().check_events("Mouse button down")):
+            if(self.rect_image.collidepoint(mouse.pos)):
+                self.entry_is_active = True
+                self.mode = 0
+            else:
+                self.entry_is_active = False
+                self.mode = 1
+                if(len(self.text)==0):
+                    self.text = self.initial_text
+
+        if(self.entry_is_active):
+            if(button := event_handler.EventHandler().check_events("Key down")):
+                if button.key == pygame.K_RETURN:
+                    self.entry_is_active = False
+                elif button.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                    self.time_last_backspace = pygame.time.get_ticks()
+                else:
+                    if(len(self.text)>=self.max_len):
+                        self.entry_is_active = False
+                        self.mode = 1
+                        self.text = button.unicode
+                    elif(pygame.key.name(button.key) in ["up","down","left","right"]):
+                        self.entry_is_active = False
+                        self.mode = 1
+                        self.text = pygame.key.name(button.key)
+                    elif(button.unicode in "abcdefghijklmnopqrstuvwxyz"):
+                        self.entry_is_active = False
+                        self.mode = 1
+                        self.text = button.unicode
+                self.font.change_text(self.text)
+
+    def get_key(self):
+        if(event_handler.EventHandler().check_keys_pressed(pygame.K_BACKSPACE) and 
+           pygame.time.get_ticks()-self.time_last_backspace>500 and self.entry_is_active):
+            
+            self.text = self.text[:-1]
+
+        self.font.change_text(self.text)
+
+    def draw(self, window):
+        window.blit(self.images[self.mode].image,self.position)
+        self.font.draw(window)
+
+
 class Window:
     def __init__(self, size, position, color):
         self.size = size
@@ -180,7 +326,9 @@ class Window:
         self.widgets = []
 
     def update(self):
-        pass
+        for i in self.widgets:
+            if(i.is_active):
+                i.update()
 
     def resize(self, size):
         pass
@@ -195,23 +343,47 @@ class Window:
         window.blit(self.window,self.position)
 
         for i in self.widgets:
-            i.draw(window)
-
+            if(i.is_active):
+                i.draw(window)
 
 class OptionsGUI(Window):
     def __init__(self):
-        image = sprite.Sprite("Resources/gui/options.png")
-        image.scale([image.image.get_size()[0]*5,image.image.get_size()[1]*5])
+        self.image = sprite.Sprite("Resources/gui/options.png")
+        self.image.scale([self.image.image.get_size()[0]*5,self.image.image.get_size()[1]*5])
+        
+        self.image1 = sprite.Sprite("Resources/gui/options1.png")
+        self.image1.scale([self.image1.image.get_size()[0]*5,self.image1.image.get_size()[1]*5])
+        
+        self.image2 = sprite.Sprite("Resources/gui/options2.png")
+        self.image2.scale([self.image2.image.get_size()[0]*5,self.image2.image.get_size()[1]*5])
+        
+        self.display_button = pygame.Rect(0,0,20*5,13*5)
+        self.sound_button = pygame.Rect(23*5,0,20*5,13*5)
+        self.buttons_button = pygame.Rect(45*5,0,20*5,13*5)
 
-        super().__init__(image.image.get_size(),[100,100],(102,102,102))
-        self.window = image.image
+
+        super().__init__(self.image.image.get_size(),[100,100],(102,102,102))
+        self.window = self.image.image
+
+        self.display_button.move_ip(100,100) 
+        self.sound_button.move_ip(100,100)
+        self.buttons_button.move_ip(100,100)
 
         self.display_title = Label("Display","Resources/PixeloidSans.ttf",20,
                                    [self.position[0]+self.size[0]*0.2,self.position[0]+self.size[0]*0.1])
+        
+        self.sound_title = Label("Sound","Resources/PixeloidSans.ttf",20,
+                                [self.position[0]+self.size[0]*0.425,self.position[0]+self.size[0]*0.1])
+        
+        self.buttons_title = Label("Buttons","Resources/PixeloidSans.ttf",20,
+                                [self.position[0]+self.size[0]*0.675,self.position[0]+self.size[0]*0.1])
 
+        self.add_widget(self.display_title)
+        self.add_widget(self.sound_title)
+        self.add_widget(self.buttons_title)
+        
         self.resolution = Label("Resolution: ","Resources/PixeloidSans.ttf",30,
                                 [self.position[0]+self.size[0]*0.45,self.position[0]+self.size[0]*0.3])
-
         #current size
         resolutions = [str(pygame.display.get_surface().get_size()[0])+"x"+str(pygame.display.get_surface().get_size()[1])]
         #other sizes
@@ -230,23 +402,175 @@ class OptionsGUI(Window):
                                             [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.46],
                                             25, is_centered=True),
                                   command=self.change_fullscreen)
+        
+        full_screen_sprite = [sprite.Sprite("Resources/gui/button_release.png"),
+                              sprite.Sprite("Resources/gui/button_pressed.png")]
+        for i in full_screen_sprite:
+            i.scale([i.image.get_size()[0]*4,i.image.get_size()[1]*4])
 
-        self.add_widget(self.display_title)
+        self.debug = Button(full_screen_sprite,
+                            [self.position[0]+self.size[0]*0.1,
+                             self.position[0]+self.size[0]*0.55],
+                             font.Font("Resources/PixeloidSans.ttf","Debug",
+                                       [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.61],
+                                       25, is_centered=True),
+                             command=self.change_debug_mode)
+
         self.add_widget(self.resolution)
+        self.add_widget(self.debug)
         self.add_widget(self.resolutions)
         self.add_widget(self.fullscreen)
 
+
+        self.volume = Label("Volume: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.3])
+        self.volume.is_active = False
+
+        self.volume_vol = Volume([self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.2])
+        self.volume_vol.is_active = False
+
+        self.add_widget(self.volume)
+        self.add_widget(self.volume_vol)
+
+        self.up_label = Label("Up: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.3])
+        self.up_label.is_active = False
+        
+        self.down_label = Label("Down: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.4])
+        self.down_label.is_active = False
+
+        self.left_label = Label("Left: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.5])
+        self.left_label.is_active = False
+
+        self.right_label = Label("Right: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.6])
+        self.right_label.is_active = False
+
+        self.menu_label = Label("Menu: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.7])
+        self.menu_label.is_active = False
+   
+        self.debug_label = Label("Debug: ","Resources/PixeloidSans.ttf",30,
+                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.8])
+        self.debug_label.is_active = False
+
+        
+        full_screen_sprite = [sprite.Sprite("Resources/gui/litt_button_release.png"),
+                              sprite.Sprite("Resources/gui/litt_button_pressed.png")]
+        for i in full_screen_sprite:
+            i.scale([i.image.get_size()[0]*3,i.image.get_size()[1]*3])
+
+        self.right_button = Button(full_screen_sprite,
+                                   [self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.52],
+                                command= lambda button=self: self.change_button(button))
+        self.right_button.is_active = False
+
+        self.right_button2 = Button(full_screen_sprite,
+                                [self.position[0]+self.size[0]*0.45,self.position[0]+self.size[0]*0.52],
+                                command= lambda button=self: self.change_button(button))
+        self.right_button2.is_active = False
+
+        self.entry_up_button = Entry("up_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.22],[(self.position[0]+self.size[0]*0.3)*1.125,(self.position[0]+self.size[0]*0.22)*1.15],5,"up")
+        self.entry_up_button.is_active = False
+
+        self.entry_down_button = Entry("down_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.32],[(self.entry_up_button.position[0])*1.12*1.125,(self.entry_up_button.position[1])*1.2*1.15],5,"down")
+        self.entry_down_button.is_active = False
+
+        self.entry_left_button = Entry("left_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.42],[(self.entry_up_button.position[0])*2.12*1.125,(self.entry_up_button.position[1])*2.2*1.15],5,"left")
+        self.entry_left_button.is_active = False
+
+        self.add_widget(self.up_label)
+        self.add_widget(self.down_label)
+        self.add_widget(self.left_label)
+        self.add_widget(self.right_label)
+        self.add_widget(self.menu_label)
+        self.add_widget(self.debug_label)
+        self.add_widget(self.right_button)
+        self.add_widget(self.right_button2)
+        self.add_widget(self.entry_up_button)
+        self.add_widget(self.entry_down_button)
+
+    def change_button(self):
+        list_buttons = {}
+        for i in event_handler.EventHandler().buttons:
+            list_buttons.update({i.name : [pygame.key.name(j) for j in i.buttons]})
+        for i in self.widgets:
+            if(isinstance(i,Entry) and i.text != ""):
+                if(i.id == "up_button" and i.text not in list_buttons["up"]):
+                    new_button = event_handler.Button("up",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("up")
+                    event_handler.EventHandler().add_button(new_button)
+                elif(i.id == "down_button" and i.text not in list_buttons["down"]):
+                    new_button = event_handler.Button("down",[pygame.key.key_code(i.text)])
+                    event_handler.EventHandler().del_button("down")
+                    event_handler.EventHandler().add_button(new_button)
+
+
     def change_fullscreen(self):
-        # it ocurrs an error when calling toggle_fullscreen() when the size of the screen isnt in the list_modes()
-        if(pygame.display.get_window_size() in pygame.display.list_modes()):
-            pygame.display.toggle_fullscreen()
+        # it ocurrs an error when calling toggle_fullscreen() and the size of the screen isnt in the list_modes()
+        # also for some reason if the size is 1920x1080
+        if(pygame.display.get_window_size() in pygame.display.list_modes() and pygame.display.get_window_size() != (1920,1080)):
+            if(pygame.display.is_fullscreen()):
+                pygame.display.set_mode(pygame.display.get_window_size(),pygame.RESIZABLE)
+                scene_manager.SceneManager().curr_scene.resize(pygame.display.get_window_size())
+            else:
+                pygame.display.set_mode(pygame.display.get_window_size(),pygame.FULLSCREEN)
+                scene_manager.SceneManager().curr_scene.resize(pygame.display.get_window_size())
+                
+
+    def change_debug_mode(self):
+        debug.DebugInfo().is_active = not debug.DebugInfo().is_active
+
+    def activate_widgets(self,*widgets):
+        for i in self.widgets:
+            if(i in widgets):
+                i.is_active = True
+            elif(i not in widgets and i!=self.display_title and i != self.sound_title and i!=self.buttons_title):
+                i.is_active = False
 
     def update(self):
+        if(not self.is_active):
+            return
+        
+        self.change_button()
+
+        if(debug.DebugInfo().is_active):
+            self.debug.mode = 1
+        else:
+            self.debug.mode = 0
+
         if(button := event_handler.EventHandler().check_events("Mouse button down")):
-            
             pos_of_window = [button.pos[0]-self.position[0],button.pos[1]-self.position[1]]
             if(button.button == 1 and not self.window.get_rect().collidepoint(pos_of_window)):
                 self.is_active = False
+            
+            elif(button.button == 1 and self.display_button.collidepoint(button.pos)):
+                self.activate_widgets(self.resolution,self.resolutions,
+                                      self.fullscreen,self.debug)
+                self.window = self.image.image
+            
+            elif(button.button == 1 and self.sound_button.collidepoint(button.pos)):
+                self.activate_widgets(self.volume,self.volume_vol)
+                self.window = self.image1.image
+            
+            elif(button.button == 1 and self.buttons_button.collidepoint(button.pos)):
+                self.activate_widgets(self.up_label,self.down_label,self.left_label,self.right_label,
+                                      self.menu_label, self.debug_label,self.right_button,self.right_button2,self.entry_up_button,
+                                      self.entry_down_button,self.entry_left_button)
+                self.window = self.image2.image
 
-        self.fullscreen.update()
-        self.resolutions.update()
+        for i in self.widgets:
+            if(i.is_active):
+                i.update()
+
+    def draw(self, window):
+        if(not self.is_active):
+            return
+
+        window.blit(self.window,self.position)
+
+        for i in self.widgets:
+            if(i.is_active):
+                i.draw(window)

@@ -2,6 +2,19 @@ import pygame
 
 import utils
 
+class Button:
+	def __init__(self, name, buttons):
+		self.name = name
+		
+		if(isinstance(buttons, list)):
+			self.buttons = buttons
+		else:
+			try:
+				self.buttons = list(buttons)
+			except:
+				self.buttons = [buttons]
+
+
 class EventHandler(metaclass=utils.SingletonMeta):
 	def __init__(self):
 		self.is_active = pygame.get_init()
@@ -16,7 +29,19 @@ class EventHandler(metaclass=utils.SingletonMeta):
 					  "Mouse button down": pygame.MOUSEBUTTONDOWN, "Mouse button up": pygame.MOUSEBUTTONUP,
 					  "Video resize" : pygame.VIDEORESIZE}
 		
+		self.buttons = [Button("up",[pygame.K_UP, pygame.K_w]),Button("down",[pygame.K_DOWN, pygame.K_s]),
+				  		Button("left",[pygame.K_LEFT, pygame.K_a]),Button("right",[pygame.K_RIGHT, pygame.K_d])]
+
 		self.is_control_key_pressed = False
+		self.is_alt_key_pressed = False
+
+	def add_button(self, button: Button):
+		self.buttons.append(button)
+
+	def del_button(self, name):
+		for i in self.buttons:
+			if(i.name == name):
+				self.buttons.remove(i)
 
 	def get_event_key(self, name: str) -> int:
 		try:
@@ -33,6 +58,14 @@ class EventHandler(metaclass=utils.SingletonMeta):
 
 	def add_event(self, name: str, event_key: int) -> None:
 		self.event_types.update({name: event_key})
+
+	def is_button_pressed(self, name):
+		for i in self.buttons:
+			if(i.name == name):
+				if(button := self.check_events("Key down")):
+					if(button.key in i.buttons):
+						return True
+		return False
 
 	def update(self) -> None:
 		if(not self.is_active):
@@ -64,8 +97,12 @@ class EventHandler(metaclass=utils.SingletonMeta):
 			# Control
 			if(key.scancode == 224):
 				self.is_control_key_pressed = True
+			# Alt left
+			elif(key.scancode == 226):
+				self.is_alt_key_pressed = True
 		else:
 			self.is_control_key_pressed = False
+			self.is_alt_key_pressed = False
 
 	def check_keys_pressed(self, keycode: int) -> bool:
 		return self.keys_pressed[keycode]

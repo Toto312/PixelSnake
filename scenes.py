@@ -53,31 +53,28 @@ class GameScene(scene.Scene):
         self.died_sound_played = False
 
     def check_events(self):
+        if(self.event_handler.is_button_pressed("Menu")):
+            self.is_menu_opened = not self.is_menu_opened
+            self.is_paused = self.is_menu_opened
         if(button := self.event_handler.check_events("Key down")):
-            # ESC
-            if(button.key == 27):
-                self.is_menu_opened = not self.is_menu_opened
-                self.is_paused = self.is_menu_opened
-
-            elif(button.key == 13):
+            if(button.key == 13):
                 if(self.is_paused and not self.is_menu_opened):
                     self.is_paused = not self.is_paused
 
     def check_events_movement(self):
-        if(button := self.event_handler.check_events("Key down")):
-            if(button.key == pygame.K_w or button.key == pygame.K_UP):
-                self.snake.change_direction([0,-1])
-            elif(button.key == pygame.K_s or button.key == pygame.K_DOWN):
-                self.snake.change_direction([0,1])
-            elif(button.key == pygame.K_a or button.key == pygame.K_LEFT):
-                self.snake.change_direction([-1,0])
-            elif(button.key == pygame.K_d or button.key == pygame.K_RIGHT):
-                self.snake.change_direction([1,0])
-            # enter
-            elif(button.key == 13):
-                if(self.does_died):
-                    self.restart()
-                    self.died_sound_played = False
+        if(button := self.event_handler.is_button_pressed("up")):
+            self.snake.change_direction([0,-1])
+        elif(button := self.event_handler.is_button_pressed("down")):
+            self.snake.change_direction([0,1])
+        elif(button := self.event_handler.is_button_pressed("left")):
+            self.snake.change_direction([-1,0])
+        elif(button := self.event_handler.is_button_pressed("right")):
+            self.snake.change_direction([1,0])
+        # enter
+        elif(button := self.event_handler.check_events("Key down")):
+            if(button.key == 13 and self.does_died):
+                self.restart()
+                self.died_sound_played = False
  
     def resize(self, size):
         last_limit_position = self.limit[:]

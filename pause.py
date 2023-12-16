@@ -4,6 +4,7 @@ import sprite
 import event_handler
 import gui
 import scene_manager
+import debug
 
 class Pause:
     def __init__(self, scene):
@@ -42,8 +43,6 @@ class Pause:
         self.actual_button_selected = None
         self.actual_music_button_selected = "on"
 
-        self.debug = False
-
     def resize(self):
         for name,button in self.buttons.items():
             button[0].change_position([self.scene.screen.get_size()[0]*0.5 - button[0].image.get_size()[0]/2,
@@ -61,11 +60,6 @@ class Pause:
                             button[0].rect[1] - button[1].rect[1]])
 
     def update(self):
-        if(key := event_handler.EventHandler().check_events("Key down")):
-            # F1
-            if(key.scancode == 58):
-                self.debug = not self.debug
-
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(self.actual_button_selected == "play"):
                 self.scene.is_menu_opened = False
@@ -116,7 +110,7 @@ class Pause:
         window.blit(self.button_music[self.actual_music_button_selected][0].image,
                     self.button_music[self.actual_music_button_selected][0].rect[0:2])
 
-        if(self.debug):
+        if(debug.DebugInfo().is_active):
             for name,i in self.buttons.items():
                 if(name != "default"):
                     pygame.draw.rect(window,(255,0,0),i[1].rect)

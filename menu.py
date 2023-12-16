@@ -6,6 +6,7 @@ import sprite
 import event_handler
 import scene_manager
 import window
+import debug
 
 class MenuButtons:
     def __init__(self, scene):
@@ -70,7 +71,6 @@ class MenuButtons:
             image[1].rect[1] += image[0].rect[1] + 10*5
 
         self.selected_exit_sprite = "off"
-        self.debug = False
 
     def resize(self, size):
         self.window.resize(size)
@@ -167,11 +167,6 @@ class MenuButtons:
     def update(self):
         self.window.update()
         if(not self.window.is_active):
-            if(key := event_handler.EventHandler().check_events("Key down")):
-                # F1
-                if(key.scancode == 58):
-                    self.debug = not self.debug
-
             if(key := event_handler.EventHandler().check_events("Mouse button down")):
                 if(self.selected_play_sprite == "on"):
                     scene_manager.SceneManager().change_scene("Game")
@@ -206,7 +201,7 @@ class MenuButtons:
         
         self.window.draw(self.screen)
 
-        if(self.debug):
+        if(debug.DebugInfo().is_active):
             pygame.draw.rect(self.screen,(255,0,0),self.play_button[self.selected_play_sprite][1].rect)
             pygame.draw.rect(self.screen,(255,0,0),self.options_button[self.selected_options_sprite][1].rect)
             pygame.draw.rect(self.screen,(255,0,0),self.exit_button[self.selected_exit_sprite][1].rect)

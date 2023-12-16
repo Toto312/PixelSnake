@@ -7,7 +7,7 @@ import scene_manager
 import utils
 import direction
 import sprite
-import event_handler
+import debug
 
 class Snake:
     def __init__(self, grid, limit, pos, is_playing=True):
@@ -17,7 +17,7 @@ class Snake:
         self.is_playing = is_playing
 
         self.color = (240,70,61)
-        self.speed = 0.30
+        self.speed = 0.20
         self.initial_pos = pos
 
         self.real_pos = self.grid.ret_coord_grid(pos)
@@ -38,8 +38,6 @@ class Snake:
 
         self.sprite_to_add = []
         self.collided_itself = False
-
-        self.debug = False
 
         self.pos = sprite.Sprite([20,20])
         self.pos.image.fill((0,255,0))
@@ -79,7 +77,7 @@ class Snake:
         self.last_direction.add(self.direction)
         
         if(not (dir[0] == -self.direction.direction[0] and dir[1] == -self.direction.direction[1]) and
-           pygame.time.get_ticks()-self.last_direction.last().time>10*time_game.Time().dt):
+           pygame.time.get_ticks()-self.last_direction.last().time>8*time_game.Time().dt):
             self.direction = direction.Direction(dir,pygame.time.get_ticks())
 
     def is_colliding(self, rect):
@@ -94,14 +92,7 @@ class Snake:
             return True
         return False
 
-    def check_debug_enabled(self):
-        if(event := event_handler.EventHandler().check_events("Key down")):
-            if(event.key == pygame.K_F1):
-                self.debug = not self.debug
-
     def update(self):
-        self.check_debug_enabled()
-
         if(self.sprite_to_add):
             for i in self.sprite_to_add:
                 self.snake_body.add(i)
@@ -128,7 +119,7 @@ class Snake:
             #the +2 its because the snake touches the topleft since its size is 46 instead of 50 (for aesthetic purposes)
             window.blit(i.image,(i.rect[0]+offset[0]+4,i.rect[1]+offset[1]+4))
         
-        if(self.debug):
+        if(debug.DebugInfo().is_active):
             #center sprite
             window.blit(self.pos.image,[self.pos.rect[0]-self.pos.rect[2]/2+offset[0]+4,self.pos.rect[1]-self.pos.rect[3]/2+offset[1]+4])
 
@@ -144,6 +135,8 @@ class Snake:
             self.head.rect[1] = max(min(self.grid.ret_coord_grid(self.real_pos)[1],self.grid.ret_coord_world(self.grid.max)[1]),0)
 
         if(self.head.rect[0:2]!= last_pos):
+            self.real_pos = [self.head.rect[0]+self.head.rect[2]/2,
+                             self.head.rect[1]+self.head.rect[3]/2]
             for i in range(len(self.snake_body.sprites())-1):
                 i+=1
                 

@@ -22,15 +22,19 @@ class Game:
         self.screen = pygame.display.set_mode([700,700], pygame.RESIZABLE)
 
         self.event_handler = event_handler.EventHandler()
+        self.event_handler.add_button(event_handler.Button("Menu",pygame.K_ESCAPE))
+        self.event_handler.add_button(event_handler.Button("Debug",pygame.K_F1))
         self.scene_manager = scene_manager.SceneManager()
         self.time = time_game.Time()
-        self.debug = debug.DebugInfo(self.screen)
   
         self.game_scene = scenes.GameScene()
         self.scene_manager.add_scene(self.game_scene)
         
         self.menu_scene = scenes.MenuScene()
         self.scene_manager.add_scene(self.menu_scene)
+
+        self.debug = debug.DebugInfo()
+        self.show_fps = time_game.ShowFPS()
 
         # Music
         self.event_handler.create_event("End music")
@@ -47,7 +51,7 @@ class Game:
             self.time.update()
 
             # update events
-            self.debug.update()
+            self.show_fps.update()
             self.event_handler.update()
             self.check_game_events()
             self.scene_manager.update()
@@ -55,7 +59,7 @@ class Game:
             # draw
             self.screen.fill((0,0,0))
             self.scene_manager.draw()
-            self.debug.draw()
+            self.show_fps.draw()
             pygame.display.flip()
 
     def check_game_events(self):
@@ -63,12 +67,11 @@ class Game:
             pygame.quit()
             sys.exit()
 
+        if(self.event_handler.is_button_pressed("Debug")):
+            self.debug.change_state(not self.debug.is_active)
         if(key := self.event_handler.check_events("Key down")):
-            # F1
-            if(key.scancode == 58):
-                self.debug.is_active = not self.debug.is_active
             # F4
-            if(key.scancode == 61):
+            if(key.scancode == 61 and self.event_handler.is_control_key_pressed):
                 pygame.quit()
                 sys.exit()
 
@@ -77,7 +80,7 @@ class Game:
             if(width < 700 or height < 700):
                 width = 700
                 height = 700
-            self.screen = pygame.display.set_mode( (width,height), pygame.RESIZABLE)
+            self.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
             self.scene_manager.resize([width,height])
             
     def music_manager(self):
