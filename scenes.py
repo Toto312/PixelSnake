@@ -14,6 +14,8 @@ import font
 import menu
 import sprite
 import random
+import volume
+import save
 
 class GameScene(scene.Scene):
     def __init__(self):
@@ -39,19 +41,26 @@ class GameScene(scene.Scene):
         
         #threshold for the size of the score font
         self.score_threshold_x = self.score_font.surface.get_size()[0]
-        self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [self.screen.get_size()[0],self.screen.get_size()[1]*0.3], 60)
+        self.max_score_font = font.Font("Resources/PixeloidSans.ttf", f"Max Score!", [0,0], 60)
         self.max_score_font.rotate(-45)
-
+        self.max_score_font.change_position([self.screen.get_size()[0]*0.55,self.screen.get_size()[1]*0.1])
         self.is_paused = True
         self.is_menu_opened = False
         self.does_died = False
 
         self.increment_sound = pygame.mixer.Sound("Resources/music/increment.mp3")
-        self.increment_sound.set_volume(0.4)
+        self.increment_sound.set_volume(0.5)
         self.die_sound = pygame.mixer.Sound("Resources/music/died.mp3")
-        self.increment_sound.set_volume(0.4)
+        self.increment_sound.set_volume(0.5)
         self.died_sound_played = False
+        self.already_checked_sound = False
 
+        if(max := save.SaveFile().read_value("max score")):
+            self.max_score = int(max)
+        else:
+            self.max_score = 0
+
+        self.is_max_score = False
     def check_events(self):
         if(self.event_handler.is_button_pressed("Menu")):
             self.is_menu_opened = not self.is_menu_opened
@@ -97,6 +106,7 @@ class GameScene(scene.Scene):
         self.press_enter.is_active = False
         self.snake = snake.Snake(self.grid,self.limit,[self.limit[2]/2,self.limit[3]/2])
         self.apple.relocate_position(self.snake.snake_body.sprites())
+        self.is_max_score = False
 
     def check_collision(self):
         if(self.apple.rect.collidepoint(self.snake.head.rect[0:2])):
@@ -114,6 +124,11 @@ class GameScene(scene.Scene):
         self.does_died = True
 
     def update(self):
+        if(self.increment_sound.get_volume()*2 != volume.Volume().volume):
+            self.increment_sound.set_volume(volume.Volume().volume/2)
+        if(self.die_sound.get_volume()*2 != volume.Volume().volume):
+            self.die_sound.set_volume(volume.Volume().volume/2)
+
         self.score_font.change_text(f"{self.score}")
         # the x value is the 9/10 of the screen minus the size of the number (if 2 digits it moves a bit to the left)
         self.score_font.change_position([self.screen.get_size()[0]*0.9-(self.score_font.surface.get_size()[0]-self.score_threshold_x),self.screen.get_size()[1]*0.1])
@@ -148,10 +163,15 @@ class GameScene(scene.Scene):
         self.screen.blit(self.apple.image,(self.apple.rect[0]+self.limit.x+4,self.apple.rect[1]+self.limit.y+4))
 
         if(self.does_died):
-            if(self.score == 169):
-                self.max_score_font.draw(self.screen)
+            if(self.max_score < self.score or self.score == 169):
+                self.max_score = self.score
+                save.SaveFile().change_value("max score",self.max_score)
+                self.is_max_score = True
             self.game_over.draw(self.screen)
             self.press_enter.draw(self.screen)
+
+        if(self.is_max_score):
+            self.max_score_font.draw(self.screen)
 
         if(self.is_paused):
             self.press_enter.draw(self.screen)

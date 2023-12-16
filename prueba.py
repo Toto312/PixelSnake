@@ -1,5 +1,4 @@
 import pygame
-
 pygame.init()
 
-print(pygame.key.name(pygame.K_ESCAPE))
+print(pygame.key.name(1073741905))

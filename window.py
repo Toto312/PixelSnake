@@ -7,6 +7,8 @@ import event_handler
 import scene_manager
 import debug
 import math
+import volume
+import save
 
 class Widget:
     def __init__(self, position = [0,0]):
@@ -137,6 +139,7 @@ class Options(Widget):
         if(resolution != list(pygame.display.get_surface().get_size()) and not pygame.display.is_fullscreen()):
             pygame.display.set_mode(resolution,pygame.RESIZABLE)
             scene_manager.SceneManager().curr_scene.resize(resolution)
+            save.SaveFile().change_value("resolution",f"{resolution[0]}x{resolution[1]}")
 
     def update(self):
         if(self.is_selected):
@@ -205,32 +208,40 @@ class Volume(Widget):
         self.level4.move_ip(position[0],position[1])
 
         self.curr_image = 0
-        self.get_curr_image()
+        self.get_curr_volume()
         self.images = [volume,volume1,volume2,volume3,volume4]
         self.position = position
 
-    def get_curr_image(self):
-        vol = pygame.mixer.music.get_volume()
+    def get_curr_volume(self):
+        vol = float(volume.Volume().volume)
+        print(vol)
         dou = math.ceil(vol*4)
         self.curr_image = dou
 
     def update(self):
         if(key := event_handler.EventHandler().check_events("Mouse button down")):
             if(key.button == 1 and self.level.collidepoint(key.pos)):
+                volume.Volume().volume = 0
                 pygame.mixer.music.set_volume(0)
                 self.curr_image = 0
             elif(key.button == 1 and self.level1.collidepoint(key.pos)):
+                volume.Volume().volume = 0.25
                 pygame.mixer.music.set_volume(0.25)
                 self.curr_image = 1
             elif(key.button == 1 and self.level2.collidepoint(key.pos)):
+                volume.Volume().volume = 0.5
                 pygame.mixer.music.set_volume(0.5)
                 self.curr_image = 2
             elif(key.button == 1 and self.level3.collidepoint(key.pos)):
                 pygame.mixer.music.set_volume(0.75)
+                volume.Volume().volume = 0.75
                 self.curr_image = 3
             elif(key.button == 1 and self.level4.collidepoint(key.pos)):
                 pygame.mixer.music.set_volume(1)
+                volume.Volume().volume = 1
                 self.curr_image = 4
+            
+            save.SaveFile().change_value("volume",f"{volume.Volume().volume}")
 
     def draw(self, window):
         window.blit(self.images[self.curr_image].image,self.position)
@@ -436,27 +447,27 @@ class OptionsGUI(Window):
         self.add_widget(self.volume_vol)
 
         self.up_label = Label("Up: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.3])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.3])
         self.up_label.is_active = False
         
         self.down_label = Label("Down: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.4])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.4])
         self.down_label.is_active = False
 
         self.left_label = Label("Left: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.5])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.5])
         self.left_label.is_active = False
 
         self.right_label = Label("Right: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.6])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.6])
         self.right_label.is_active = False
 
         self.menu_label = Label("Menu: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.7])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.7])
         self.menu_label.is_active = False
    
         self.debug_label = Label("Debug: ","Resources/PixeloidSans.ttf",30,
-                            [self.position[0]+self.size[0]*0.28,self.position[0]+self.size[0]*0.8])
+                            [self.position[0]+self.size[0]*0.32,self.position[0]+self.size[0]*0.8])
         self.debug_label.is_active = False
 
         
@@ -465,23 +476,49 @@ class OptionsGUI(Window):
         for i in full_screen_sprite:
             i.scale([i.image.get_size()[0]*3,i.image.get_size()[1]*3])
 
-        self.entry_up_button = Entry("up_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.22],[(self.position[0]+self.size[0]*0.3)*1.125,(self.position[0]+self.size[0]*0.22)*1.15],6,"up")
+        up_key_names = "up"
+        down_key_names = "down"
+        left_key_names = "left"
+        right_key_names = "right"
+        menu_key_names = "escape"
+        debug_key_names = "f1"
+        if(up_key := save.SaveFile().read_value("up")):
+            up_key_names = pygame.key.name(int(up_key))
+        if(down_key := save.SaveFile().read_value("down")):
+            down_key_names = pygame.key.name(int(down_key))
+        if(left_key := save.SaveFile().read_value("left")):
+            left_key_names = pygame.key.name(int(left_key))
+        if(right_key := save.SaveFile().read_value("right")):
+            right_key_names = pygame.key.name(int(right_key))
+        if(menu_key := save.SaveFile().read_value("Menu")):
+            menu_key_names = pygame.key.name(int(menu_key))
+        if(debug_key := save.SaveFile().read_value("Debug")):
+            debug_key_names = pygame.key.name(int(debug_key))
+
+
+        self.entry_up_button = Entry("up_button",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.22],[(self.position[0]+self.size[0]*0.35)*1.125,(self.position[0]+self.size[0]*0.22)*1.15],6,"up")
         self.entry_up_button.is_active = False
+        self.entry_up_button.text = up_key_names
 
-        self.entry_down_button = Entry("down_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.32],[(self.entry_up_button.position[0])*1.11*1.125,(self.entry_up_button.position[1])*1.2*1.15],6,"down")
+        self.entry_down_button = Entry("down_button",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.32],[(self.entry_up_button.position[0])*1.09*1.125,(self.entry_up_button.position[1])*1.2*1.15],6,"down")
         self.entry_down_button.is_active = False
+        self.entry_down_button.text = down_key_names
 
-        self.entry_right_button = Entry("left_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.42],[(self.entry_up_button.position[0])*1.03*1.125,(self.entry_up_button.position[1])*1.4*1.15],6,"left")
+        self.entry_right_button = Entry("left_button",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.42],[(self.entry_up_button.position[0])*1.02*1.125,(self.entry_up_button.position[1])*1.4*1.15],6,"left")
         self.entry_right_button.is_active = False
+        self.entry_right_button.text = left_key_names
 
-        self.entry_left_button = Entry("right_button",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.52],[(self.entry_up_button.position[0])*1.09*1.125,(self.entry_up_button.position[1])*1.6*1.15],6,"right")
+        self.entry_left_button = Entry("right_button",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.52],[(self.entry_up_button.position[0])*1.07*1.125,(self.entry_up_button.position[1])*1.6*1.15],6,"right")
         self.entry_left_button.is_active = False
+        self.entry_left_button.text = right_key_names
         
-        self.entry_menu_button = Entry("menu",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.62],[(self.entry_up_button.position[0])*1.19*1.125,(self.entry_up_button.position[1])*1.8*1.15],6,"escape")
+        self.entry_menu_button = Entry("menu",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.62],[(self.entry_up_button.position[0])*1.16*1.125,(self.entry_up_button.position[1])*1.8*1.15],6,"escape")
         self.entry_menu_button.is_active = False
+        self.entry_menu_button.text = menu_key_names
 
-        self.entry_debug_button = Entry("debug",[self.position[0]+self.size[0]*0.3,self.position[0]+self.size[0]*0.72],[(self.entry_up_button.position[0])*0.985*1.125,(self.entry_up_button.position[1])*2.01*1.15],6,"f1")
+        self.entry_debug_button = Entry("debug",[self.position[0]+self.size[0]*0.35,self.position[0]+self.size[0]*0.72],[(self.entry_up_button.position[0])*0.985*1.125,(self.entry_up_button.position[1])*2.01*1.15],6,"f1")
         self.entry_debug_button.is_active = False
+        self.entry_debug_button.text = debug_key_names
 
         self.add_widget(self.up_label)
         self.add_widget(self.down_label)
@@ -506,26 +543,32 @@ class OptionsGUI(Window):
                     new_button = event_handler.Button("up",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("up")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("up",pygame.key.key_code(i.text))
                 elif(i.id == "down_button" and i.text not in list_buttons["down"]):
                     new_button = event_handler.Button("down",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("down")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("down",pygame.key.key_code(i.text))
                 elif(i.id == "left_button" and i.text not in list_buttons["left"]):
                     new_button = event_handler.Button("left",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("left")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("left",pygame.key.key_code(i.text))
                 elif(i.id == "right_button" and i.text not in list_buttons["right"]):
                     new_button = event_handler.Button("right",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("right")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("right",pygame.key.key_code(i.text))
                 elif(i.id == "menu" and i.text not in list_buttons["Menu"]):
                     new_button = event_handler.Button("menu",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("menu")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("Menu",pygame.key.key_code(i.text))
                 elif(i.id == "debug" and i.text not in list_buttons["Debug"]):
                     new_button = event_handler.Button("Debug",[pygame.key.key_code(i.text)])
                     event_handler.EventHandler().del_button("Debug")
                     event_handler.EventHandler().add_button(new_button)
+                    save.SaveFile().change_value("Debug",pygame.key.key_code(i.text))
 
 
     def change_fullscreen(self):
