@@ -56,7 +56,7 @@ class Game:
 
     def configure_file(self):
         if(resolution := self.save.read_value("resolution")):
-            # convert 700x700 to [700,700]
+            # convert (ex.) 700x700 to [700,700]
             res = [int(resolution[0:resolution.find("x")]),int(resolution[resolution.find("x")+1:])]
             if(self.save.read_value("fullscreen")=="true"):
                 self.screen = pygame.display.set_mode(res, pygame.RESIZABLE | pygame.FULLSCREEN)

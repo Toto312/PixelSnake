@@ -60,6 +60,11 @@ class Button(Widget):
     def change_image_index(self, i):
         self.mode = i
 
+    def move(self, position):
+        self.position = [self.position[0]+position[0],
+                         self.position[1]+position[1]]
+        self.font.move(position)
+
     def draw(self, window):
         if(isinstance(self.sprites,list) and self.mode <= 2):
             window.blit(self.sprites[self.mode].image,self.position)
@@ -81,6 +86,9 @@ class Label(Widget):
         self.size = size
 
         self.font = font.Font(self.font_name,self.text,self.position,self.size)
+
+    def move(self, position):
+        self.font.move(position)
 
     def draw(self, window):
         self.font.draw(window)
@@ -161,6 +169,13 @@ class Options(Widget):
                 self.is_opened = False
             elif(not self.is_selected and self.is_opened):
                 self.is_opened = False
+
+    def move(self,position):
+        self.position = [self.position[0]+position[0],
+                         self.position[1]+position[1]]
+        for i in self.fonts:
+            i.move(position)
+
 
     def draw(self, window):
         window.blit(self.image.image,self.position)
@@ -243,6 +258,15 @@ class Volume(Widget):
             
             save.SaveFile().change_value("volume",f"{volume.Volume().volume}")
 
+    def move(self, position):
+        self.position = [self.position[0]+position[0],
+                         self.position[1]+position[1]]
+        self.level.move_ip(position)
+        self.level1.move_ip(position)
+        self.level2.move_ip(position)
+        self.level3.move_ip(position)
+        self.level4.move_ip(position)
+
     def draw(self, window):
         window.blit(self.images[self.curr_image].image,self.position)
 
@@ -314,6 +338,12 @@ class Entry(Widget):
                 if(pygame.key.key_code(self.text)==27):
                     self.text = "escape"
                 self.font.change_text(self.text)
+
+    def move(self, position):
+        self.position = [self.position[0]+position[0],
+                         self.position[1]+position[1]]
+        self.font.move(position)
+        self.rect_image.move_ip(position)
 
     def get_key(self):
         if(event_handler.EventHandler().check_keys_pressed(pygame.K_BACKSPACE) and 
@@ -570,6 +600,46 @@ class OptionsGUI(Window):
                     event_handler.EventHandler().add_button(new_button)
                     save.SaveFile().change_value("Debug",pygame.key.key_code(i.text))
 
+    def resize(self, size):
+        diff_size = [size[0]/700,
+                     size[1]/700]
+        
+        new_pos = [size[0]*100/700*diff_size[0],
+                   size[1]*100/700*diff_size[1]]
+
+        rel_pos = [new_pos[0]-self.position[0],
+                   new_pos[1]-self.position[1]]
+
+        self.position = new_pos
+        self.display_title.move(rel_pos)
+        self.sound_title.move(rel_pos)
+        self.buttons_title.move(rel_pos)
+
+        self.display_button.move_ip(rel_pos)
+        self.sound_button.move_ip(rel_pos)
+        self.buttons_button.move_ip(rel_pos)
+
+        self.resolution.move(rel_pos)
+        self.fullscreen.move(rel_pos)
+        self.debug.move(rel_pos)
+        self.resolutions.move(rel_pos)
+
+        self.volume.move(rel_pos)
+        self.volume_vol.move(rel_pos)
+
+        self.up_label.move(rel_pos)
+        self.down_label.move(rel_pos)
+        self.left_label.move(rel_pos)
+        self.right_label.move(rel_pos)
+        self.menu_label.move(rel_pos)
+        self.debug_label.move(rel_pos)
+
+        self.entry_up_button.move(rel_pos)
+        self.entry_down_button.move(rel_pos)
+        self.entry_right_button.move(rel_pos)
+        self.entry_left_button.move(rel_pos)
+        self.entry_menu_button.move(rel_pos)
+        self.entry_debug_button.move(rel_pos)
 
     def change_fullscreen(self):
         # it ocurrs an error when calling toggle_fullscreen() and the size of the screen isnt in the list_modes()

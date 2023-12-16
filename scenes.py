@@ -99,6 +99,8 @@ class GameScene(scene.Scene):
         self.game_over = game_over.GameOver()
         self.press_enter = game_over.PressEnter()
         self.pause.resize()
+        
+        self.max_score_font.move(self.limit[0:2])
 
     def restart(self):
         self.score = 0
